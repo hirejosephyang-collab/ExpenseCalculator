@@ -1,0 +1,107 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>고정비 계산기 - 완성</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}body{font-family:system-ui,-apple-system,sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#1f2937;line-height:1.6;padding:1rem;min-height:100vh}.container{max-width:100%;margin:0 auto}.header{text-align:center;background:rgba(255,255,255,.95);backdrop-filter:blur(20px);border-radius:24px;padding:1.5rem;margin-bottom:1.5rem;box-shadow:0 10px 30px rgba(0,0,0,.2)}.header h1{font-size:1.6rem;font-weight:800;background:linear-gradient(135deg,#4f46e5,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:.25rem}.header p{color:#6b7280;font-size:.95rem}.card{background:rgba(255,255,255,.95);backdrop-filter:blur(20px);border-radius:20px;padding:1.5rem;margin-bottom:1.25rem;box-shadow:0 8px 32px rgba(0,0,0,.12);border:1px solid rgba(255,255,255,.2)}.date-row{display:flex;gap:.75rem;margin-bottom:1rem;flex-wrap:wrap}.date-row input{flex:1;min-width:120px;padding:.875rem 1rem;border:2px solid #e5e7eb;border-radius:12px;font-size:.95rem;font-weight:500;transition:all .2s}.date-row input:focus{outline:none;border-color:#6366f1;box-shadow:0 0 0 3px rgba(99,102,241,.2);transform:translateY(-1px)}.toggle-row{display:flex;gap:.75rem;margin-top:.5rem}.toggle{flex:1;display:flex;align-items:center;justify-content:center;gap:.5rem;padding:.875rem .75rem;border:2px solid #e5e7eb;border-radius:12px;cursor:pointer;background:#fff;transition:all .2s;font-weight:500;font-size:.9rem}.toggle:hover{border-color:#d1d5db;transform:translateY(-1px)}.toggle.active{border-color:#6366f1;background:#eef2ff}.toggle input[type=checkbox]{width:20px;height:20px;accent-color:#6366f1;margin:0}.kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin-bottom:1.5rem}@media (min-width:500px){.kpis{grid-template-columns:repeat(5,1fr)}}.kpi{text-align:center;padding:1.25rem .75rem;border-radius:16px;background:linear-gradient(135deg,rgba(255,255,255,.9),rgba(255,255,255,.7));box-shadow:0 8px 25px rgba(0,0,0,.15);transition:transform .2s}.kpi:hover{transform:translateY(-2px)}.kpi-label{font-size:.75rem;color:#6b7280;margin-bottom:.25rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em}.kpi-value{font-size:1.4rem;font-weight:800;color:#1f2937;margin-bottom:.25rem}.kpi-meta{font-size:.75rem;color:#9ca3af}.table-card{background:rgba(255,255,255,.95);backdrop-filter:blur(20px);border-radius:20px;overflow:hidden;box-shadow:0 20px 40px rgba(0,0,0,.15);margin-bottom:1.5rem}.table-header{background:linear-gradient(135deg,#f8fafc 0%,#e2e8f0 100%);padding:1.25rem 1.5rem;font-size:1rem;font-weight:700;color:#1e293b;display:flex;justify-content:space-between;align-items:center}.table-wrapper{overflow-x:auto;-webkit-overflow-scrolling:touch}.table{min-width:650px;width:100%;border-collapse:collapse;font-size:.88rem}@media (max-width:500px){.table{font-size:.82rem;min-width:580px}}th,td{padding:.875rem .625rem;text-align:left;border-bottom:1px solid #f1f5f9}th{font-weight:700;color:#374151;font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;background:rgba(248,250,252,.8)}.amount{text-align:right;font-weight:700;color:#059669}.badge{padding:.375rem .625rem;border-radius:8px;font-size:.7rem;font-weight:700}.joint{background:linear-gradient(135deg,#dbeafe,#bfdbfe);color:#1e40af}.personal{background:linear-gradient(135deg,#f3e8ff,#e9d5ff);color:#7c3aed}.paid{background:linear-gradient(135deg,#dcfce7,#bbf7d0);color:#166534}.unpaid{background:linear-gradient(135deg,#fef3c7,#fde68a);color:#92400e}.future{background:linear-gradient(135deg,#e0e7ff,#c7d2fe);color:#3730a3}.variable{background:linear-gradient(135deg,#fecaca,#fca5a5);color:#dc2626}.checkbox{width:22px;height:22px;accent-color:#10b981;cursor:pointer}.split{display:grid;grid-template-columns:1fr;gap:1rem}@media (min-width:500px){.split{grid-template-columns:1fr 1fr}}.split-card{background:rgba(255,255,255,.95);backdrop-filter:blur(20px);border-radius:20px;padding:1.5rem;box-shadow:0 10px 30px rgba(0,0,0,.15)}.split-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}.split-title{font-size:1.1rem;font-weight:700;color:#1e293b}.split-count{font-size:.95rem;color:#6b7280;font-weight:600}.item-row{display:flex;justify-content:space-between;align-items:center;padding:1rem 0;border-bottom:1px solid #f1f5f9}.item-row:last-child{border-bottom:none}.item-name{font-weight:600;color:#374151;font-size:.95rem}.item-amount{font-weight:800;color:#059669;font-size:1.1rem}.empty{text-align:center;padding:2.5rem 1rem;color:#9ca3af;font-style:italic;font-size:.95rem}.footer{text-align:center;padding:2rem 0;color:rgba(255,255,255,.9);font-size:.85rem;text-shadow:0 1px 2px rgba(0,0,0,.3)}@media (max-width:450px){th:nth-child(5),td:nth-child(5),th:nth-child(6),td:nth-child(6){display:none}.table{min-width:400px}}
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>📊 04월 고정비</h1>
+    <p>본인 부담 기준 (리스 $120.43 × 2)</p>
+  </div>
+
+  <div class="card">
+    <div class="date-row">
+      <div>
+        <label>선택일</label>
+        <input type="date" id="selDate" value="2026-04-15">
+      </div>
+      <div>
+        <label>AMEX</label>
+        <input type="number" id="amex" step="0.01" placeholder="0">
+      </div>
+    </div>
+    <div class="date-row">
+      <div>
+        <label>TD Visa</label>
+        <input type="number" id="td" step="0.01" placeholder="0">
+      </div>
+      <div></div>
+    </div>
+    <div class="toggle-row">
+      <div class="toggle active" onclick="toggleF('joint')">
+        <input type="checkbox" id="joint" checked>공동
+      </div>
+      <div class="toggle active" onclick="toggleF('personal')">
+        <input type="checkbox" id="personal" checked>개인
+      </div>
+    </div>
+  </div>
+
+  <div class="kpis">
+    <div class="kpi">
+      <div class="kpi-label">Scheduled</div>
+      <div class="kpi-value" id="sch">$2,356</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Paid</div>
+      <div class="kpi-value" id="pd">$0</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">남은</div>
+      <div class="kpi-value" id="rem">$2,356</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">공동</div>
+      <div class="kpi-value" id="jt">$1,656</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">개인</div>
+      <div class="kpi-value" id="per">$700</div>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <div class="table-header">
+      📋 고정비 목록 <span id="cnt">(13개)</span>
+    </div>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>✓</th><th>항목</th><th>금액</th><th>일자</th><th>주기</th><th>구분</th>
+          </tr>
+        </thead>
+        <tbody id="tbl"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="split">
+    <div class="split-card">
+      <div class="split-header">
+        <div class="split-title">✅ 완료</div>
+        <div class="split-count" id="dcnt">0개</div>
+      </div>
+      <div id="dlist"></div>
+    </div>
+    <div class="split-card">
+      <div class="split-header">
+        <div class="split-title">⏳ 남음</div>
+        <div class="split-count" id="lcnt">13개</div>
+      </div>
+      <div id="llist"></div>
+    </div>
+  </div>
+</div>
+<script>
+const data=[{id:'rent',n:'월세',a:957.5,d:'04-01',t:'공동'},{id:'food',n:'식비',a:400,d:'04-01',t:'공동'},{id:'lease1',n:'차리스1',a:120.43,d:'04-01',t:'공동'},{id:'phone',n:'통신',a:79.1,d:'04-10',t:'공동'},{id:'amex',n:'AMEX',a:0,d:'04-17',t:'개인',v:1},{id:'td',n:'TD',a:0,d:'04-17',t:'개인',v:1},{id:'yt',n:'YT',a:19.2,d:'04-18',t:'개인'},{id:'net',n:'Netflix',a:9.03,d:'04-18',t:'개인'},{id:'car',n:'차보험',a:157.13,d:'04-23',t:'공동'},{id:'home',n:'주택보험',a:22.01,d:'04-23',t:'공동'},{id:'rbc',n:'RBC',a:16.95,d:'04-25',t:'개인'},{id:'prime',n:'Amazon',a:11.29,d:'04-27',t:'개인'},{id:'lease2',n:'차리스2',a:120.43,d:'04-15',t:'공동'}];let ck=new Set,jt=1,ps=1;function f(v){return new Intl.NumberFormat('ko-KR',{style:'currency',currency:'CAD'}).format(v||0)}function r(){let ae=+document.getElementById('amex').value||0,td=+document.getElementById('td').value||0;data.find(x=>x.id=='amex').a=ae;data.find(x=>x.id=='td').a=td;let v=data.filter(x=>(jt&&x.t=='공동')||(ps&&x.t=='개인')),s=v.filter(x=>!ck.has(x.id)),p=v.filter(x=>ck.has(x.id));let su=v=>v.reduce((t,x)=>t+x.a,0);document.getElementById('sch').textContent=f(su(s));document.getElementById('pd').textContent=f(su(p));document.getElementById('rem').textContent=f(su(s));document.getElementById('jt').textContent=f(su(s.filter(x=>x.t=='공동')));document.getElementById('per').textContent=f(su(s.filter(x=>x.t=='개인')));document.getElementById('cnt').textContent='('+v.length+'개)';document.getElementById('dcnt').textContent=p.length+'개';document.getElementById('lcnt').textContent=s.length+'개';document.getElementById('tbl').innerHTML=v.map(x=>{let c=ck.has(x.id),b=c?'paid':(x.v&&x.a==0)?'variable':'unpaid',st=c?'완료':(x.v&&x.a==0)?'미입력':'예정';return`<tr onclick="tc('${x.id}')"><td><input class="checkbox" type="checkbox" ${c?'checked':''} onchange="event.stopPropagation();tc('${x.id}')"></td><td>${x.n}</td><td class="amount">${f(x.a)}</td><td>${x.d}</td><td>${x.cycle||'월'}</td><td><span class="badge ${x.t=='공동'?'joint':'personal'}">${x.t}</span></td><td><span class="badge ${b}">${st}</span></td></tr>`}).join('');document.getElementById('dlist').innerHTML=p.length?p.map(x=>`<div class="item-row"><span class="item-name">${x.n}</span><span class="item-amount">${f(x.a)}</span></div>`).join(''):'<div class="empty">완료없음</div>';document.getElementById('llist').innerHTML=s.length?s.map(x=>`<div class="item-row"><span class="item-name">${x.n}</span><span class="item-amount">${f(x.a)}</span></div>`).join(''):'<div class="empty">남은없음</div>'}function tc(id){ck.has(id)?ck.delete(id):ck.add(id);r()}function toggleF(t){t=='joint'?(jt=!jt,document.getElementById('joint').checked=jt): (ps=!ps,document.getElementById('personal').checked=ps);r()}document.getElementById('amex').oninput=document.getElementById('td').oninput=r;r();
+</script>
+</body>
+</html>
