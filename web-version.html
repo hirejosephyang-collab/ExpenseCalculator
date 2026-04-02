@@ -1,475 +1,458 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Expense Calculator - Final v2</title>
-  <link rel="preconnect" href="https://api.fontshare.com" />
-  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap" rel="stylesheet" />
-  <style>
-    :root, [data-theme="light"] {
-      --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
-      --text-sm: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
-      --text-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
-      --text-lg: clamp(1.125rem, 1rem + 0.75vw, 1.5rem);
-      --text-xl: clamp(1.5rem, 1.2rem + 1.25vw, 2rem);
-      --space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem; --space-4: 1rem; --space-5: 1.25rem;
-      --space-6: 1.5rem; --space-8: 2rem; --space-10: 2.5rem; --space-12: 3rem; --space-16: 4rem;
-      --color-bg:#f7f6f2; --color-surface:#f9f8f5; --color-surface-2:#fbfbf9; --color-surface-offset:#edeae5;
-      --color-border:#d4d1ca; --color-divider:#dcd9d5; --color-text:#28251d; --color-text-muted:#706e68;
-      --color-text-faint:#a09d96; --color-primary:#01696f; --color-primary-highlight:#cedcd8; --color-success:#437a22;
-      --color-success-highlight:#d4dfcc; --color-warning:#964219; --color-warning-highlight:#e7d7c4; --color-blue:#006494;
-      --color-blue-highlight:#c6d8e4; --color-purple:#7a39bb; --color-purple-highlight:#dacfde; --radius-sm:.375rem;
-      --radius-md:.5rem; --radius-lg:.75rem; --radius-xl:1rem; --shadow-sm:0 1px 2px rgba(20,20,20,.06);
-      --shadow-md:0 12px 24px rgba(20,20,20,.08); --transition:180ms cubic-bezier(0.16,1,0.3,1);
-      --font-body:'Satoshi', sans-serif;
-    }
-    [data-theme="dark"] {
-      --color-bg:#171614; --color-surface:#1c1b19; --color-surface-2:#201f1d; --color-surface-offset:#262320;
-      --color-border:#393836; --color-divider:#302f2d; --color-text:#ece9e2; --color-text-muted:#b7b2aa;
-      --color-text-faint:#817d76; --color-primary:#4f98a3; --color-primary-highlight:#313b3b; --color-success:#6daa45;
-      --color-success-highlight:#33422e; --color-warning:#fdab43; --color-warning-highlight:#4a3d2b; --color-blue:#5591c7;
-      --color-blue-highlight:#293846; --color-purple:#a86fdf; --color-purple-highlight:#3a2d48; --shadow-sm:0 1px 2px rgba(0,0,0,.22);
-      --shadow-md:0 12px 24px rgba(0,0,0,.32);
-    }
-    *,*::before,*::after{box-sizing:border-box}
-    html,body{margin:0;padding:0;min-height:100%}
-    body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.5}
-    button,input{font:inherit}
-    input,button{transition:border-color var(--transition),background var(--transition),box-shadow var(--transition),color var(--transition)}
-    .app{max-width:1280px;margin:0 auto;padding:var(--space-6)}
-    .topbar{display:flex;justify-content:space-between;align-items:center;gap:var(--space-4);margin-bottom:var(--space-6);flex-wrap:wrap}
-    .brand{display:flex;align-items:center;gap:var(--space-3)}
-    .logo{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,var(--color-primary-highlight),var(--color-surface-offset));display:grid;place-items:center;border:1px solid var(--color-border);box-shadow:var(--shadow-sm)}
-    .logo svg{width:22px;height:22px;color:var(--color-primary)}
-    h1{font-size:var(--text-xl);line-height:1.1;margin:0}
-    .sub{font-size:var(--text-sm);color:var(--color-text-muted);margin-top:4px}
-    .theme-btn,.chip-btn{border:1px solid var(--color-border);background:var(--color-surface);color:var(--color-text);border-radius:999px;padding:.7rem 1rem;cursor:pointer}
-    .theme-btn:hover,.chip-btn:hover{border-color:var(--color-primary);box-shadow:var(--shadow-sm)}
-    .plan{display:grid;grid-template-columns:1.2fr .9fr .9fr .9fr;gap:var(--space-4);margin-bottom:var(--space-5)}
-    .card{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-xl);box-shadow:var(--shadow-sm)}
-    .panel{padding:var(--space-5)}
-    .eyebrow{font-size:var(--text-xs);text-transform:uppercase;letter-spacing:.08em;color:var(--color-text-muted);margin-bottom:var(--space-2)}
-    .plan h2{font-size:var(--text-lg);margin:0 0 .45rem 0}
-    .plan p{font-size:var(--text-sm);color:var(--color-text-muted);margin:0}
-    .controls{display:grid;grid-template-columns:1.15fr .85fr;gap:var(--space-4);margin-bottom:var(--space-5)}
-    .control-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--space-4)}
-    label{display:block;font-size:var(--text-xs);text-transform:uppercase;letter-spacing:.06em;color:var(--color-text-muted);margin-bottom:var(--space-2)}
-    input[type="date"],input[type="number"]{width:100%;padding:.9rem 1rem;border-radius:var(--radius-lg);border:1px solid var(--color-border);background:var(--color-surface-2);color:var(--color-text)}
-    input[type="date"]:focus-visible,input[type="number"]:focus-visible{outline:none;border-color:var(--color-primary);box-shadow:0 0 0 4px color-mix(in srgb, var(--color-primary) 16%, transparent)}
-    .toggle-row{display:flex;gap:var(--space-3);flex-wrap:wrap}
-    .toggle{display:inline-flex;align-items:center;gap:.55rem;padding:.75rem 1rem;border:1px solid var(--color-border);border-radius:999px;background:var(--color-surface-2);cursor:pointer;font-size:var(--text-sm)}
-    .toggle input{accent-color:var(--color-primary)}
-    .kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:var(--space-4);margin-bottom:var(--space-5)}
-    .kpi{padding:var(--space-5)}
-    .kpi .label{font-size:var(--text-xs);text-transform:uppercase;letter-spacing:.08em;color:var(--color-text-muted);margin-bottom:var(--space-2)}
-    .kpi .value{font-size:clamp(1.35rem,1.1rem + 1vw,2rem);font-weight:700;font-variant-numeric:tabular-nums lining-nums}
-    .kpi .meta{margin-top:var(--space-2);font-size:var(--text-xs);color:var(--color-text-muted)}
-    .accent-joint{background:linear-gradient(180deg, color-mix(in srgb, var(--color-blue-highlight) 70%, var(--color-surface) 30%), var(--color-surface))}
-    .accent-personal{background:linear-gradient(180deg, color-mix(in srgb, var(--color-purple-highlight) 70%, var(--color-surface) 30%), var(--color-surface))}
-    .accent-paid{background:linear-gradient(180deg, color-mix(in srgb, var(--color-success-highlight) 70%, var(--color-surface) 30%), var(--color-surface))}
-    .accent-remaining{background:linear-gradient(180deg, color-mix(in srgb, var(--color-warning-highlight) 70%, var(--color-surface) 30%), var(--color-surface))}
-    .table-wrap,.split{display:grid;grid-template-columns:1.35fr .9fr;gap:var(--space-4);margin-bottom:var(--space-5)}
-    table{width:100%;border-collapse:collapse}
-    th,td{padding:.95rem .85rem;border-bottom:1px solid var(--color-divider);text-align:left;font-size:var(--text-sm);vertical-align:middle}
-    th{font-size:var(--text-xs);text-transform:uppercase;letter-spacing:.06em;color:var(--color-text-muted);position:sticky;top:0;background:var(--color-surface)}
-    .num{font-variant-numeric:tabular-nums lining-nums;text-align:right}
-    .badge{display:inline-flex;align-items:center;padding:.35rem .65rem;border-radius:999px;font-size:var(--text-xs);font-weight:700}
-    .joint{background:var(--color-blue-highlight);color:var(--color-blue)}
-    .personal{background:var(--color-purple-highlight);color:var(--color-purple)}
-    .paid{background:var(--color-success-highlight);color:var(--color-success)}
-    .unpaid{background:var(--color-warning-highlight);color:var(--color-warning)}
-    .future{background:var(--color-primary-highlight);color:var(--color-primary)}
-    .section-title{display:flex;justify-content:space-between;align-items:flex-end;gap:var(--space-4);margin-bottom:var(--space-3)}
-    .section-title h3{margin:0;font-size:var(--text-lg)}
-    .muted{font-size:var(--text-sm);color:var(--color-text-muted)}
-    .items{display:flex;flex-direction:column;gap:var(--space-3)}
-    .item{display:grid;grid-template-columns:1fr auto;gap:var(--space-3);padding:var(--space-4);border:1px solid var(--color-border);border-radius:var(--radius-lg);background:var(--color-surface-2)}
-    .item .name{font-weight:700}
-    .item .meta{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.35rem}
-    .item .amt{font-weight:700;font-variant-numeric:tabular-nums lining-nums}
-    .empty{padding:var(--space-6);border:1px dashed var(--color-border);border-radius:var(--radius-lg);background:var(--color-surface-2);color:var(--color-text-muted);font-size:var(--text-sm)}
-    .check{width:18px;height:18px;accent-color:var(--color-success)}
-    .small{font-size:var(--text-xs);color:var(--color-text-muted)}
-    .footer-note{font-size:var(--text-xs);color:var(--color-text-muted);padding-bottom:var(--space-8)}
-    @media (max-width: 1100px){.plan,.controls,.kpis,.table-wrap,.split{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
-    @media (max-width: 720px){.app{padding:var(--space-4)}.control-grid{grid-template-columns:1fr}.kpis{grid-template-columns:1fr}th:nth-child(4),td:nth-child(4){display:none}.item{grid-template-columns:1fr}.topbar{align-items:flex-start}}
-    .accent-income{background:linear-gradient(180deg, color-mix(in srgb, var(--color-success-highlight) 70%, var(--color-surface) 30%), var(--color-surface))}
-.accent-net{background:linear-gradient(180deg, color-mix(in srgb, var(--color-primary-highlight)
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Expense Calculator - Final v2</title>
+<link rel="preconnect" href="https://api.fontshare.com" />
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap" rel="stylesheet" />
+<style>
+:root, [data-theme="light"] {
+--text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+--text-sm: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
+--text-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+--text-lg: clamp(1.125rem, 1rem + 0.75vw, 1.5rem);
+--text-xl: clamp(1.5rem, 1.2rem + 1.25vw, 2rem);
+--space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem; --space-4: 1rem; --space-5: 1.25rem;
+--space-6: 1.5rem; --space-8: 2rem; --space-10: 2.5rem; --space-12: 3rem; --space-16: 4rem;
+--color-bg:#f7f6f2; --color-surface:#f9f8f5; --color-surface-2:#fbfbf9; --color-surface-offset:#edeae5;
+--color-border:#d4d1ca; --color-divider:#dcd9d5; --color-text:#28251d; --color-text-muted:#706e68;
+--color-text-faint:#a09d96; --color-primary:#01696f; --color-primary-highlight:#cedcd8; --color-success:#437a22;
+--color-success-highlight:#d4dfcc; --color-warning:#964219; --color-warning-highlight:#e7d7c4; --color-blue:#006494;
+--color-blue-highlight:#c6d8e4; --color-purple:#7a39bb; --color-purple-highlight:#dacfde; --radius-sm:.375rem;
+--radius-md:.5rem; --radius-lg:.75rem; --radius-xl:1rem; --shadow-sm:0 1px 2px rgba(20,20,20,.06);
+--shadow-md:0 12px 24px rgba(20,20,20,.08); --transition:180ms cubic-bezier(0.16,1,0.3,1);
+--font-body:'Satoshi', sans-serif;
+}
+[data-theme="dark"] {
+--color-bg:#171614; --color-surface:#1c1b19; --color-surface-2:#201f1d; --color-surface-offset:#262320;
+--color-border:#393836; --color-divider:#302f2d; --color-text:#ece9e2; --color-text-muted:#b7b2aa;
+--color-text-faint:#817d76; --color-primary:#4f98a3; --color-primary-highlight:#313b3b; --color-success:#6daa45;
+--color-success-highlight:#33422e; --color-warning:#fdab43; --color-warning-highlight:#4a3d2b; --color-blue:#5591c7;
+--color-blue-highlight:#293846; --color-purple:#a86fdf; --color-purple-highlight:#3a2d48; --shadow-sm:0 1px 2px rgba(0,0,0,.22);
+--shadow-md:0 12px 24px rgba(0,0,0,.32);
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;padding:0;min-height:100%}
+body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text);line-height:1.5}
+button,input{font:inherit}
+input,button{transition:border-color var(--transition),background var(--transition),box-shadow var(--transition),color var(--transition)}
+.app{max-width:1280px;margin:0 auto;padding:var(--space-6)}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:var(--space-4);margin-bottom:var(--space-6);flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:var(--space-3)}
+.logo{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,var(--color-primary-highlight),var(--color-surface-offset));display:grid;place-items:center;border:1px solid var(--color-border);box-shadow:var(--shadow-sm)}
+.logo svg{width:22px;height:22px;color:var(--color-primary)}
+h1{font-size:var(--text-xl);line-height:1.1;margin:0}
+.sub{font-size:var(--text-sm);color:var(--color-text-muted);margin-top:4px}
+.theme-btn,.chip-btn{border:1px solid var(--color-border);background:var(--color-surface);color:var(--color-text);border-radius:999px;padding:.7rem 1rem;cursor:pointer}
+.theme-btn:hover,.chip-btn:hover{border-color:var(--color-primary);box-shadow:var(--shadow-sm)}
+.plan{display:grid;grid-template-columns:1.2fr .9fr .9fr .9fr;gap:var(--space-4);margin-bottom:var(--space-5)}
+.card{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-xl);box-shadow:var(--shadow-sm)}
+.panel{padding:var(--space-5)}
+.eyebrow{font-size:var(--text-xs);text-transform:uppercase;letter-spacing:.08em;color:var(--color-text-muted);margin-bottom:var(--space-2)}
+.plan h2{font-size:var(--text-lg);margin:0 0 .45rem 0}
+.plan p{font-size:var(--text-sm);color:var(--color-text-muted);margin:0}
+.controls{display:grid;grid-template-columns:1.15fr .85fr;gap:var(--space-4);margin-bottom:var(--space-5)}
+.control-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--space-4)}
+label{display:block;font-size:var(--text-xs);text-transform:uppercase;letter-spacing:.06em;color:var(--color-text-muted);margin-bottom:var(--space-2)}
+input[type="date"],input[type="number"]{width:100%;padding:.9rem 1rem;border-radius:var(--radius-lg);border:1px solid var(--color-border);background:var(--color-surface-2);color:var(--color-text)}
+input[type="date"]:focus-visible,input[type="number"]:focus-visible{outline:none;border-color:var(--color-primary);box-shadow:0 0 0 4px color-mix(in srgb, var(--color-primary) 16%, transparent)}
+.toggle-row{display:flex;gap:var(--space-3);flex-wrap:wrap}
+.toggle{display:inline-flex;align-items:center;gap:.55rem;padding:.75rem 1rem;border:1px solid var(--color-border);border-radius:999px;background:var(--color-surface-2);cursor:pointer;font-size:var(--text-sm)}
+.toggle input{accent-color:var(--color-primary)}
+.kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:var(--space-4);margin-bottom:var(--space-5)}
+.kpi{padding:var(--space-5)}
+.kpi .label{font-size:var(--text-xs);text-transform:uppercase;letter-spacing:.08em;color:var(--color-text-muted);margin-bottom:var(--space-2)}
+.kpi .value{font-size:clamp(1.35rem,1.1rem + 1vw,2rem);font-weight:700;font-variant-numeric:tabular-nums lining-nums}
+.kpi .meta{margin-top:var(--space-2);font-size:var(--text-xs);color:var(--color-text-muted)}
+.accent-joint{background:linear-gradient(180deg, color-mix(in srgb, var(--color-blue-highlight) 70%, var(--color-surface) 30%), var(--color-surface))}
+.accent-personal{background:linear-gradient(180deg, color-mix(in srgb, var(--color-purple-highlight) 70%, var(--color-surface) 30%), var(--color-surface))}
+.accent-paid{background:linear-gradient(180deg, color-mix(in srgb, var(--color-success-highlight) 70%, var(--color-surface) 30%), var(--color-surface))}
+.accent-remaining{background:linear-gradient(180deg, color-mix(in srgb, var(--color-warning-highlight) 70%, var(--color-surface) 30%), var(--color-surface))}
+.table-wrap,.split{display:grid;grid-template-columns:1.35fr .9fr;gap:var(--space-4);margin-bottom:var(--space-5)}
+table{width:100%;border-collapse:collapse}
+th,td{padding:.95rem .85rem;border-bottom:1px solid var(--color-divider);text-align:left;font-size:var(--text-sm);vertical-align:middle}
+th{font-size:var(--text-xs);text-transform:uppercase;letter-spacing:.06em;color:var(--color-text-muted);position:sticky;top:0;background:var(--color-surface)}
+.num{font-variant-numeric:tabular-nums lining-nums;text-align:right}
+.badge{display:inline-flex;align-items:center;padding:.35rem .65rem;border-radius:999px;font-size:var(--text-xs);font-weight:700}
+.joint{background:var(--color-blue-highlight);color:var(--color-blue)}
+.personal{background:var(--color-purple-highlight);color:var(--color-purple)}
+.paid{background:var(--color-success-highlight);color:var(--color-success)}
+.unpaid{background:var(--color-warning-highlight);color:var(--color-warning)}
+.future{background:var(--color-primary-highlight);color:var(--color-primary)}
+.section-title{display:flex;justify-content:space-between;align-items:flex-end;gap:var(--space-4);margin-bottom:var(--space-3)}
+.section-title h3{margin:0;font-size:var(--text-lg)}
+.muted{font-size:var(--text-sm);color:var(--color-text-muted)}
+.items{display:flex;flex-direction:column;gap:var(--space-3)}
+.item{display:grid;grid-template-columns:1fr auto;gap:var(--space-3);padding:var(--space-4);border:1px solid var(--color-border);border-radius:var(--radius-lg);background:var(--color-surface-2)}
+.item .name{font-weight:700}
+.item .meta{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.35rem}
+.item .amt{font-weight:700;font-variant-numeric:tabular-nums lining-nums}
+.empty{padding:var(--space-6);border:1px dashed var(--color-border);border-radius:var(--radius-lg);background:var(--color-surface-2);color:var(--color-text-muted);font-size:var(--text-sm)}
+.check{width:18px;height:18px;accent-color:var(--color-success)}
+.small{font-size:var(--text-xs);color:var(--color-text-muted)}
+.footer-note{font-size:var(--text-xs);color:var(--color-text-muted);padding-bottom:var(--space-8)}
+@media (max-width: 1100px){.plan,.controls,.kpis,.table-wrap,.split{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width: 720px){.app{padding:var(--space-4)}.control-grid{grid-template-columns:1fr}.kpis{grid-template-columns:1fr}th:nth-child(4),td:nth-child(4){display:none}.item{grid-template-columns:1fr}.topbar{align-items:flex-start}}
+</style>
 </head>
 <body>
-  <div class="app">
-    <header class="topbar">
-      <div class="brand">
-        <div class="logo" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-label="Expense calculator logo">
-            <path d="M5 17.5 10 12l3 3 6-7" />
-            <path d="M5 6h14" />
-            <path d="M5 10h5" />
-          </svg>
-        </div>
-        <div>
-          <h1>Expense Calculator</h1>
-          <div class="sub">✓ 예정비용 기준 + 체크 시 비용 제외</div>
-        </div>
-      </div>
-      <button class="theme-btn" id="themeToggle" aria-label="Switch theme">Dark mode</button>
-    </header>
+<div class="app">
+<header class="topbar">
+<div class="brand">
+<div class="logo" aria-hidden="true">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-label="Expense calculator logo">
+<path d="M5 17.5 10 12l3 3 6-7" />
+<path d="M5 6h14" />
+<path d="M5 10h5" />
+</svg>
+</div>
+<div>
+<h1>Expense Calculator</h1>
+<div class="sub">✓ 예정비용 기준 + 체크 시 비용 제외</div>
+</div>
+</div>
+<button class="theme-btn" id="themeToggle" aria-label="Switch theme">Dark mode</button>
+</header>
 
-    <section class="plan">
-      <article class="card panel">
-        <div class="eyebrow">1. Product plan</div>
-        <h2>월 전체 비용 추적</h2>
-        <p>선택 날짜에 관계없이 해당 월 전체 예정 비용을 보여주고, 체크하면 Scheduled에서 제외됩니다.</p>
-      </article>
-      <article class="card panel">
-        <div class="eyebrow">2. Data structure</div>
-        <p class="muted">월 전체 항목 + Biweekly 반복 생성 + 변동 카드 수동 입력.</p>
-      </article>
-      <article class="card panel">
-        <div class="eyebrow">3. Calculation logic</div>
-        <p class="muted">Scheduled = 월 전체 예정 - 체크된 항목. 남은고정비 = Scheduled - paid.</p>
-      </article>
-      <article class="card panel">
-        <div class="eyebrow">4. UI layout</div>
-        <p class="muted">상단 컨트롤 → KPI → 전체 테이블 → paid/remaining 분리.</p>
-      </article>
-    </section>
+<section class="plan">
+<article class="card panel">
+<div class="eyebrow">1. Product plan</div>
+<h2>월 전체 비용 추적</h2>
+<p>선택 날짜에 관계없이 해당 월 전체 예정 비용을 보여주고, 체크하면 Scheduled에서 제외됩니다.</p>
+</article>
+<article class="card panel">
+<div class="eyebrow">2. Data structure</div>
+<p class="muted">월 전체 항목 + Biweekly 반복 생성 + 변동 카드 수동 입력.</p>
+</article>
+<article class="card panel">
+<div class="eyebrow">3. Calculation logic</div>
+<p class="muted">Scheduled = 월 전체 예정 - 체크된 항목. 남은고정비 = Scheduled - paid.</p>
+</article>
+<article class="card panel">
+<div class="eyebrow">4. UI layout</div>
+<p class="muted">상단 컨트롤 → KPI → 전체 테이블 → paid/remaining 분리.</p>
+</article>
+</section>
 
-    <section class="controls">
-      <article class="card panel">
-        <div class="section-title"><h3>Controls</h3><span class="muted">변경 시 즉시 재계산됩니다.</span></div>
-        <div class="control-grid">
-          <div>
-            <label for="selectedDate">선택 월</label>
-            <input id="selectedDate" type="date" />
-          </div>
-          <div>  <!
-    <label for="Income">수입</label>
-    <input id="Income" type="number" min="0" step="0.01" placeholder="월 수입 입력" />
-          <div>
-            <label for="amexAmount">AMEX Marriott Bonvoy</label>
-            <input id="amexAmount" type="number" min="0" step="0.01" placeholder="사용 시 금액 입력" />
-          </div>
-          <div>
-            <label for="tdAmount">TD Cash Back Visa</label>
-            <input id="tdAmount" type="number" min="0" step="0.01" placeholder="사용 시 금액 입력" />
-          </div>
-          <div>
-            <label>항목 필터</label>
-            <div class="toggle-row">
-              <label class="toggle"><input id="showJoint" type="checkbox" checked /> 공동</label>
-              <label class="toggle"><input id="showPersonal" type="checkbox" checked /> 개인</label>
-            </div>
-          </div>
-        </div>
-      </article>
-      <article class="card panel">
-        <div class="section-title"><h3>계산 로직</h3><span class="muted">실시간 업데이트</span></div>
-        <div class="items">
-          <div class="item"><div><div class="name">월 전체 기준</div><div class="small">선택월 전체 예정비용 표시.</div></div><div class="badge future">Active</div></div>
-          <div class="item"><div><div class="name">체크박스 의미</div><div class="small">체크 시 Scheduled에서 제외 + paid 처리.</div></div><div class="badge paid">Enabled</div></div>
-          <div class="item"><div><div class="name">Biweekly 리스</div><div class="small">Vehicle Lease 04-01부터 14일 간격 생성.</div></div><div class="badge joint">04-01</div></div>
-        </div>
-      </article>
-    </section>
+<section class="controls">
+<article class="card panel">
+<div class="section-title"><h3>Controls</h3><span class="muted">변경 시 즉시 재계산됩니다.</span></div>
+<div class="control-grid">
+<div>
+<label for="selectedDate">선택 월</label>
+<input id="selectedDate" type="date" />
+</div>
+<div>
+<label for="amexAmount">AMEX Marriott Bonvoy</label>
+<input id="amexAmount" type="number" min="0" step="0.01" placeholder="사용 시 금액 입력" />
+</div>
+<div>
+<label for="tdAmount">TD Cash Back Visa</label>
+<input id="tdAmount" type="number" min="0" step="0.01" placeholder="사용 시 금액 입력" />
+</div>
+<div>
+<label>항목 필터</label>
+<div class="toggle-row">
+<label class="toggle"><input id="showJoint" type="checkbox" checked /> 공동</label>
+<label class="toggle"><input id="showPersonal" type="checkbox" checked /> 개인</label>
+</div>
+</div>
+</div>
+</article>
+<article class="card panel">
+<div class="section-title"><h3>계산 로직</h3><span class="muted">실시간 업데이트</span></div>
+<div class="items">
+<div class="item"><div><div class="name">월 전체 기준</div><div class="small">선택월 전체 예정비용 표시.</div></div><div class="badge future">Active</div></div>
+<div class="item"><div><div class="name">체크박스 의미</div><div class="small">체크 시 Scheduled에서 제외 + paid 처리.</div></div><div class="badge paid">Enabled</div></div>
+<div class="item"><div><div class="name">Biweekly 리스</div><div class="small">Vehicle Lease 04-01부터 14일 간격 생성.</div></div><div class="badge joint">04-01</div></div>
+</div>
+</article>
+</section>
 
 <section class="kpis">
-  <article class="card kpi">
-    <div class="label">Scheduled total</div>
-    <div class="value" id="scheduledTotal">$0.00</div>
-    <div class="meta" id="scheduledMeta">월 전체 예정 - 체크된 항목</div>
-  </article>
-  <article class="card kpi accent-paid">
-    <div class="label">Paid total</div>
-    <div class="value" id="paidTotal">$0.00</div>
-    <div class="meta">체크된 항목</div>
+<article class="card kpi"><div class="label">Scheduled total</div><div class="value" id="scheduledTotal">$0.00</div><div class="meta" id="scheduledMeta">월 전체 예정 - 체크된 항목</div></article>
+<article class="card kpi accent-paid"><div class="label">Paid total</div><div class="value" id="paidTotal">$0.00</div><div class="meta">체크된 항목</div></article>
+<article class="card kpi accent-remaining"><div class="label">남은 고정비</div><div class="value" id="remainingTotal">$0.00</div><div class="meta">Scheduled - paid</div></article>
+<article class="card kpi accent-joint"><div class="label">공동 총액</div><div class="value" id="jointTotal">$0.00</div><div class="meta">필터된 공동 Scheduled</div></article>
+<article class="card kpi accent-personal"><div class="label">개인 총액</div><div class="value" id="personalTotal">$0.00</div><div class="meta">필터된 개인 Scheduled</div></article>
+</section>
 
-    <section class="table-wrap">
-      <article class="card panel">
-        <div class="section-title"><h3>지출 테이블</h3><span class="muted" id="tableMeta">월 전체 항목 및 Biweekly 발생내역.</span></div>
-        <div style="overflow:auto; max-height: 680px;">
-          <table>
-            <thead>
-              <tr>
-                <th>체크</th>
-                <th>항목명</th>
-                <th>금액</th>
-                <th>결제일</th>
-                <th>주기</th>
-                <th>유형</th>
-                <th>상태</th>
-              </tr>
-            </thead>
-            <tbody id="expenseBody"></tbody>
-          </table>
-        </div>
-      </article>
-      <article class="card panel">
-        <div class="section-title"><h3>계산 상세</h3><span class="muted">실시간 정보</span></div>
-        <div class="items" id="notesPanel"></div>
-      </article>
-    </section>
+<section class="table-wrap">
+<article class="card panel">
+<div class="section-title"><h3>지출 테이블</h3><span class="muted" id="tableMeta">월 전체 항목 및 Biweekly 발생내역.</span></div>
+<div style="overflow:auto; max-height: 680px;">
+<table>
+<thead>
+<tr>
+<th>체크</th>
+<th>항목명</th>
+<th>금액</th>
+<th>결제일</th>
+<th>주기</th>
+<th>유형</th>
+<th>상태</th>
+</tr>
+</thead>
+<tbody id="expenseBody"></tbody>
+</table>
+</div>
+</article>
+<article class="card panel">
+<div class="section-title"><h3>계산 상세</h3><span class="muted">실시간 정보</span></div>
+<div class="items" id="notesPanel"></div>
+</article>
+</section>
 
-    <section class="split">
-      <article class="card panel">
-        <div class="section-title"><h3>완료된 지출</h3><span class="muted" id="paidCount">0 항목</span></div>
-        <div class="items" id="paidList"></div>
-      </article>
-      <article class="card panel">
-        <div class="section-title"><h3>남은 지출</h3><span class="muted" id="remainingCount">0 항목</span></div>
-        <div class="items" id="remainingList"></div>
-      </article>
-    </section>
+<section class="split">
+<article class="card panel">
+<div class="section-title"><h3>완료된 지출</h3><span class="muted" id="paidCount">0 항목</span></div>
+<div class="items" id="paidList"></div>
+</article>
+<article class="card panel">
+<div class="section-title"><h3>남은 지출</h3><span class="muted" id="remainingCount">0 항목</span></div>
+<div class="items" id="remainingList"></div>
+</article>
+</section>
 
-    <p class="footer-note">✓ 최종 버전: 월 전체 예정비용 기준 + 체크 시 Scheduled 제외. Variable 카드는 금액 입력 시에만 포함.</p>
-  </div>
+<p class="footer-note">✓ 최종 버전: 월 전체 예정비용 기준 + 체크 시 Scheduled 제외. Variable 카드는 금액 입력 시에만 포함.</p>
+</div>
 
-  <script>
-    const state = {
-      theme: 'light',
-      paid: new Set(),
-      filters: { joint: true, personal: true }
-    };
-
-    const baseExpenses = [
-      { id: 'rent', name: '월세', amount: 1915.00, date: '04-01', recurrence: 'Monthly', type: 'Joint', variable: false },
-      { id: 'grocery', name: '식비', amount: 800.00, date: '04-01', recurrence: 'Monthly', type: 'Joint', variable: false },
-      { id: 'lease', name: '차량 리스', amount: 240.86, date: '04-01', recurrence: 'Biweekly', type: 'Joint', variable: false },
-      { id: 'phone', name: '휴대폰/인터넷', amount: 158.20, date: '04-10', recurrence: 'Monthly', type: 'Joint', variable: false },
-      { id: 'carins', name: '차량 보험', amount: 314.62, date: '04-23', recurrence: 'Monthly', type: 'Joint', variable: false },
-      { id: 'homeins', name: '집 보험', amount: 45.32, date: '04-23', recurrence: 'Monthly', type: 'Joint', variable: false },
-      { id: 'amex', name: 'AMEX Marriott Bonvoy', amount: null, date: '04-17', recurrence: 'Monthly', type: 'Personal', variable: true },
-      { id: 'td', name: 'TD Cash Back Visa', amount: null, date: '04-17', recurrence: 'Monthly', type: 'Personal', variable: true },
-      { id: 'youtube', name: 'Youtube Premium', amount: 19.20, date: '04-18', recurrence: 'Monthly', type: 'Personal', variable: false },
-      { id: 'netflix', name: 'Netflix', amount: 9.03, date: '04-18', recurrence: 'Monthly', type: 'Personal', variable: false },
-      { id: 'rbc', name: 'RBC 계좌 유지비', amount: 16.95, date: '04-25', recurrence: 'Monthly', type: 'Personal', variable: false },
-      { id: 'prime', name: 'Amazon Prime', amount: 11.29, date: '04-27', recurrence: 'Monthly', type: 'Personal', variable: false },
-      { id: 'debt', name: 'DEBT', amount: null, date: '04-01', recurrence: 'Monthly', type: 'Personal', variable: true },
-    ];
-
-    const $ = (id) => document.getElementById(id);
-    const fmt = (n) => new Intl.NumberFormat('ko-KR', { style:'currency', currency:'CAD' }).format(n || 0);
-
-    function currentYear(){ return new Date().getFullYear(); }
-    function parseDate(mmdd, year = currentYear()){
-      const [m,d] = mmdd.split('-').map(Number);
-      return new Date(year, m - 1, d);
-    }
-    function toDateInputValue(date){
-      const y = date.getFullYear();
-      const m = String(date.getMonth()+1).padStart(2,'0');
-      const d = String(date.getDate()).padStart(2,'0');
-      return `${y}-${m}-${d}`;
-    }
-    function displayMMDD(date){
-      const m = String(date.getMonth()+1).padStart(2,'0');
-      const d = String(date.getDate()).padStart(2,'0');
-      return `${m}-${d}`;
-    }
-    function monthEnd(date){ return new Date(date.getFullYear(), date.getMonth()+1, 0); }
-function normalizeVariableAmounts(){
-  const amex = $('amexAmount').value === '' ? null : Number($('amexAmount').value);
-  const td = $('tdAmount').value === '' ? null : Number($('tdAmount').value);
-  return { amex, td, debt: null };  // debt 없으므로 null
-}
-    function buildOccurrences(selectedDate){
-  const year = selectedDate.getFullYear();
-  const month = selectedDate.getMonth();
-  const endOfMonth = monthEnd(selectedDate);
-  const vars = normalizeVariableAmounts();
-  const income = $('Income').value === '' ? null : Number($('Income').value);
-  const entries = [];
-
-      baseExpenses.forEach(exp => {
-const amount = exp.id === 'amex' ? vars.amex : 
-               exp.id === 'td' ? vars.td : 
-               exp.id === 'debt' ? vars.debt :  // ✅ 단순히 vars.debt (null)
-               exp.amount;
-        if(exp.variable && (amount === null || Number.isNaN(amount))) {
-          entries.push({
-            key: `${exp.id}-${year}-${month+1}`,
-            name: exp.name,
-            amount: null,
-            dueDate: parseDate(exp.date, year),
-            recurrence: exp.recurrence,
-            type: exp.type,
-            status: '금액 입력 필요',
-            variable: true,
-            includeNumeric: false,
-            baseId: exp.id
-          });
-          return;
-        }
-
-        if(exp.recurrence === 'Biweekly') {
-          let due = parseDate(exp.date, year);
-          while(due <= endOfMonth) {
-            if(due.getMonth() === month) {
-              entries.push({
-                key: `${exp.id}-${toDateInputValue(due)}`,
-                name: exp.name,
-                amount,
-                dueDate: new Date(due),
-                recurrence: exp.recurrence,
-                type: exp.type,
-                status: '월 전체',
-                variable: false,
-                includeNumeric: true,
-                baseId: exp.id
-              });
-            }
-            due = new Date(due);
-            due.setDate(due.getDate() + 14);
-          }
-        } else {
-          const dueDate = parseDate(exp.date, year);
-          entries.push({
-            key: `${exp.id}-${year}-${month+1}`,
-            name: exp.name,
-            amount,
-            dueDate,
-            recurrence: exp.recurrence,
-            type: exp.type,
-            status: '월 전체',
-            variable: exp.variable,
-            includeNumeric: true,
-            baseId: exp.id
-          });
-        }
-      });
-
-      return entries.sort((a,b) => a.dueDate - b.dueDate || a.name.localeCompare(b.name));
-    }
-
-    function activeType(type){
-      return (type === 'Joint' && state.filters.joint) || (type === 'Personal' && state.filters.personal);
-    }
-
-    function summarize(entries, selectedDate){
-      const visible = entries.filter(e => activeType(e.type) && e.includeNumeric);
-      const allScheduled = visible.filter(e => !state.paid.has(e.key));
-      const paid = visible.filter(e => state.paid.has(e.key));
-      const sum = arr => arr.reduce((acc, e) => acc + e.amount, 0);
-      return {
-        visible,
-        allScheduled,
-        paid,
-        unpaid: allScheduled.filter(e => !state.paid.has(e.key)),
-        scheduledTotal: sum(allScheduled),
-        paidTotal: sum(paid),
-        remainingTotal: sum(allScheduled) - sum(paid),
-        jointTotal: sum(allScheduled.filter(e => e.type === 'Joint')),
-        personalTotal: sum(allScheduled.filter(e => e.type === 'Personal')),
-        incomeTotal: income || 0,
-        netTotal: (sum(allScheduled) - sum(paid)) + (income || 0),
-        variableBlank: entries.filter(e => !e.includeNumeric && e.variable)
+<script>
+const state = {
+theme: 'light',
+paid: new Set(),
+filters: { joint: true, personal: true }
 };
-    }
 
-    function badgeClass(type){
-      if(type === 'Joint') return 'joint';
-      if(type === 'Personal') return 'personal';
-      return 'future';
-    }
+const baseExpenses = [
+{ id: 'rent', name: '월세', amount: 1915.00, date: '04-01', recurrence: 'Monthly', type: 'Joint', variable: false },
+{ id: 'grocery', name: '식비', amount: 800.00, date: '04-01', recurrence: 'Monthly', type: 'Joint', variable: false },
+{ id: 'lease', name: '차량 리스', amount: 240.86, date: '04-01', recurrence: 'Biweekly', type: 'Joint', variable: false },
+{ id: 'phone', name: '휴대폰/인터넷', amount: 158.20, date: '04-10', recurrence: 'Monthly', type: 'Joint', variable: false },
+{ id: 'carins', name: '차량 보험', amount: 314.62, date: '04-23', recurrence: 'Monthly', type: 'Joint', variable: false },
+{ id: 'homeins', name: '집 보험', amount: 45.32, date: '04-23', recurrence: 'Monthly', type: 'Joint', variable: false },
+{ id: 'amex', name: 'AMEX Marriott Bonvoy', amount: null, date: '04-17', recurrence: 'Monthly', type: 'Personal', variable: true },
+{ id: 'td', name: 'TD Cash Back Visa', amount: null, date: '04-17', recurrence: 'Monthly', type: 'Personal', variable: true },
+{ id: 'youtube', name: 'Youtube Premium', amount: 19.20, date: '04-18', recurrence: 'Monthly', type: 'Personal', variable: false },
+{ id: 'netflix', name: 'Netflix', amount: 9.03, date: '04-18', recurrence: 'Monthly', type: 'Personal', variable: false },
+{ id: 'rbc', name: 'RBC 계좌 유지비', amount: 16.95, date: '04-25', recurrence: 'Monthly', type: 'Personal', variable: false },
+{ id: 'prime', name: 'Amazon Prime', amount: 11.29, date: '04-27', recurrence: 'Monthly', type: 'Personal', variable: false }
+];
 
-    function render(){
-      const selectedDate = new Date($('selectedDate').value + 'T12:00:00');
-      const entries = buildOccurrences(selectedDate);
-   const s = summarize(entries, selectedDate);
+const $ = (id) => document.getElementById(id);
+const fmt = (n) => new Intl.NumberFormat('ko-KR', { style:'currency', currency:'CAD' }).format(n || 0);
 
-        $('scheduledTotal').textContent = fmt(s.scheduledTotal);
-        $('paidTotal').textContent = fmt(s.paidTotal);
-        $('remainingTotal').textContent = fmt(s.remainingTotal);
-        $('jointTotal').textContent = fmt(s.jointTotal);
-        $('personalTotal').textContent = fmt(s.personalTotal);
-        $('incomeTotal').textContent = fmt(s.incomeTotal);
-        $('netTotal').textContent = fmt(s.netTotal);
-        $('scheduledMeta').textContent = `월 전체 예정 (${displayMMDD(selectedDate)} 기준)`;
-        $('tableMeta').textContent = `${s.visible.length} 항목 · Scheduled ${s.allScheduled.length}개
+function currentYear(){ return new Date().getFullYear(); }
+function parseDate(mmdd, year = currentYear()){
+const [m,d] = mmdd.split('-').map(Number);
+return new Date(year, m - 1, d);
+}
+function toDateInputValue(date){
+const y = date.getFullYear();
+const m = String(date.getMonth()+1).padStart(2,'0');
+const d = String(date.getDate()).padStart(2,'0');
+return `${y}-${m}-${d}`;
+}
+function displayMMDD(date){
+const m = String(date.getMonth()+1).padStart(2,'0');
+const d = String(date.getDate()).padStart(2,'0');
+return `${m}-${d}`;
+}
+function monthEnd(date){ return new Date(date.getFullYear(), date.getMonth()+1, 0); }
+function normalizeVariableAmounts(){
+const amex = $('amexAmount').value === '' ? null : Number($('amexAmount').value);
+const td = $('tdAmount').value === '' ? null : Number($('tdAmount').value);
+return { amex, td };
+}
+function buildOccurrences(selectedDate){
+const year = selectedDate.getFullYear();
+const month = selectedDate.getMonth();
+const endOfMonth = monthEnd(selectedDate);
+const vars = normalizeVariableAmounts();
+const entries = [];
 
-      $('expenseBody').innerHTML = entries.map(item => {
-        const checked = state.paid.has(item.key);
-        const status = !item.includeNumeric ? '금액 입력 필요' : checked ? '완료' : '예정';
-        const statusClass = !item.includeNumeric ? 'future' : checked ? 'paid' : 'unpaid';
-        const amount = typeof item.amount === 'number' ? fmt(item.amount) : '—';
-        const checkboxEnabled = item.includeNumeric;
-        return `
-          <tr>
-            <td><input class="check" type="checkbox" data-key="${item.key}" ${checked ? 'checked' : ''} ${!checkboxEnabled ? 'disabled' : ''}></td>
-            <td>
-              <div style="font-weight:700">${item.name}</div>
-              <div class="small">${item.variable ? '변동 카드' : '고정비'}</div>
-            </td>
-            <td class="num">${amount}</td>
-            <td>${displayMMDD(item.dueDate)}</td>
-            <td>${item.recurrence}</td>
-            <td><span class="badge ${badgeClass(item.type)}">${item.type}</span></td>
-            <td><span class="badge ${statusClass}">${status}</span></td>
-          </tr>`;
-      }).join('');
+baseExpenses.forEach(exp => {
+const amount = exp.id === 'amex' ? vars.amex : exp.id === 'td' ? vars.td : exp.amount;
+if(exp.variable && (amount === null || Number.isNaN(amount))) {
+entries.push({
+key: `${exp.id}-${year}-${month+1}`,
+name: exp.name,
+amount: null,
+dueDate: parseDate(exp.date, year),
+recurrence: exp.recurrence,
+type: exp.type,
+status: '금액 입력 필요',
+variable: true,
+includeNumeric: false,
+baseId: exp.id
+});
+return;
+}
 
-      const noteBlocks = [
-        { title:'Scheduled 공식', text:`월 전체 예정 ${fmt(s.scheduledTotal)} = 총 예정 - 체크된 항목.` },
-        { title:'Paid 공식', text:`체크된 항목 ${fmt(s.paidTotal)}.` },
-        { title:'남은 고정비', text:`Scheduled ${fmt(s.remainingTotal)} = Scheduled - paid.` },
-        { title:'Biweekly 리스', text:`차량 리스 발생: ${entries.filter(e => e.baseId === 'lease').map(e => displayMMDD(e.dueDate)).join(', ') || '없음'}.` },
-        { title:'변동 카드', text: s.variableBlank.length ? s.variableBlank.map(v => v.name).join(' · ') + ' 금액 미입력으로 제외.' : '변동 카드 모두 활성화됨.' }
-      ];
-      $('notesPanel').innerHTML = noteBlocks.map(n => `<div class="item"><div><div class="name">${n.title}</div><div class="small">${n.text}</div></div></div>`).join('');
+if(exp.recurrence === 'Biweekly') {
+let due = parseDate(exp.date, year);
+while(due <= endOfMonth) {
+if(due.getMonth() === month) {
+entries.push({
+key: `${exp.id}-${toDateInputValue(due)}`,
+name: exp.name,
+amount,
+dueDate: new Date(due),
+recurrence: exp.recurrence,
+type: exp.type,
+status: '월 전체',
+variable: false,
+includeNumeric: true,
+baseId: exp.id
+});
+}
+due = new Date(due);
+due.setDate(due.getDate() + 14);
+}
+} else {
+const dueDate = parseDate(exp.date, year);
+entries.push({
+key: `${exp.id}-${year}-${month+1}`,
+name: exp.name,
+amount,
+dueDate,
+recurrence: exp.recurrence,
+type: exp.type,
+status: '월 전체',
+variable: exp.variable,
+includeNumeric: true,
+baseId: exp.id
+});
+}
+});
 
-      function renderList(target, items, emptyText) {
-        if(!items.length) {
-          $(target).innerHTML = `<div class="empty">${emptyText}</div>`;
-          return;
-        }
-        $(target).innerHTML = items.map(item => `
-          <div class="item">
-            <div>
-              <div class="name">${item.name}</div>
-              <div class="meta">
-                <span class="badge ${badgeClass(item.type)}">${item.type}</span>
-                <span class="badge">${item.recurrence}</span>
-                <span class="small">${displayMMDD(item.dueDate)} 결제</span>
-              </div>
-            </div>
-            <div class="amt">${fmt(item.amount)}</div>
-          </div>
-        `).join('');
-      }
+return entries.sort((a,b) => a.dueDate - b.dueDate || a.name.localeCompare(b.name));
+}
 
-      renderList('paidList', s.paid, '완료된 지출 없음.');
-      renderList('remainingList', s.unpaid, '남은 지출 없음.');
-      $('paidCount').textContent = `${s.paid.length} 항목`;
-      $('remainingCount').textContent = `${s.unpaid.length} 항목`;
+function activeType(type){
+return (type === 'Joint' && state.filters.joint) || (type === 'Personal' && state.filters.personal);
+}
 
-      document.querySelectorAll('[data-key]').forEach(box => {
-        box.addEventListener('change', (e) => {
-          const key = e.target.dataset.key;
-          if(e.target.checked) state.paid.add(key); else state.paid.delete(key);
-          render();
-        });
-      });
-    }
+function summarize(entries, selectedDate){
+const visible = entries.filter(e => activeType(e.type) && e.includeNumeric);
+const allScheduled = visible.filter(e => !state.paid.has(e.key));
+const paid = visible.filter(e => state.paid.has(e.key));
+const sum = arr => arr.reduce((acc, e) => acc + e.amount, 0);
+return {
+visible,
+allScheduled,
+paid,
+unpaid: allScheduled.filter(e => !state.paid.has(e.key)),
+scheduledTotal: sum(allScheduled),
+paidTotal: sum(paid),
+remainingTotal: sum(allScheduled) - sum(paid),
+jointTotal: sum(allScheduled.filter(e => e.type === 'Joint')),
+personalTotal: sum(allScheduled.filter(e => e.type === 'Personal')),
+variableBlank: entries.filter(e => !e.includeNumeric && e.variable)
+};
+}
 
-    function init(){
-      const today = new Date();
-      $('selectedDate').value = toDateInputValue(today);
-      $('showJoint').addEventListener('change', e => { state.filters.joint = e.target.checked; render(); });
-      $('showPersonal').addEventListener('change', e => { state.filters.personal = e.target.checked; render(); });
-      $('selectedDate').addEventListener('input', render);
-      $('amexAmount').addEventListener('input', render);
-      $('tdAmount').addEventListener('input', render);
-      $('themeToggle').addEventListener('click', () => {
-        state.theme = state.theme === 'light' ? 'dark' : 'light';
-        document.documentElement.setAttribute('data-theme', state.theme);
-        $('themeToggle').textContent = state.theme === 'light' ? 'Dark mode' : 'Light mode';
-      });
-      render();
-    }
+function badgeClass(type){
+if(type === 'Joint') return 'joint';
+if(type === 'Personal') return 'personal';
+return 'future';
+}
 
-    init();
-  </script>
+function render(){
+const selectedDate = new Date($('selectedDate').value + 'T12:00:00');
+const entries = buildOccurrences(selectedDate);
+const s = summarize(entries, selectedDate);
+
+$('scheduledTotal').textContent = fmt(s.scheduledTotal);
+$('paidTotal').textContent = fmt(s.paidTotal);
+$('remainingTotal').textContent = fmt(s.remainingTotal);
+$('jointTotal').textContent = fmt(s.jointTotal);
+$('personalTotal').textContent = fmt(s.personalTotal);
+$('scheduledMeta').textContent = `월 전체 예정 (${displayMMDD(selectedDate)} 기준)`;
+$('tableMeta').textContent = `${s.visible.length} 항목 · Scheduled ${s.allScheduled.length}개 · Paid ${s.paid.length}개`;
+
+$('expenseBody').innerHTML = entries.map(item => {
+const checked = state.paid.has(item.key);
+const status = !item.includeNumeric ? '금액 입력 필요' : checked ? '완료' : '예정';
+const statusClass = !item.includeNumeric ? 'future' : checked ? 'paid' : 'unpaid';
+const amount = typeof item.amount === 'number' ? fmt(item.amount) : '—';
+const checkboxEnabled = item.includeNumeric;
+return `
+<tr>
+<td><input class="check" type="checkbox" data-key="${item.key}" ${checked ? 'checked' : ''} ${!checkboxEnabled ? 'disabled' : ''}></td>
+<td>
+<div style="font-weight:700">${item.name}</div>
+<div class="small">${item.variable ? '변동 카드' : '고정비'}</div>
+</td>
+<td class="num">${amount}</td>
+<td>${displayMMDD(item.dueDate)}</td>
+<td>${item.recurrence}</td>
+<td><span class="badge ${badgeClass(item.type)}">${item.type}</span></td>
+<td><span class="badge ${statusClass}">${status}</span></td>
+</tr>`;
+}).join('');
+
+const noteBlocks = [
+{ title:'Scheduled 공식', text:`월 전체 예정 ${fmt(s.scheduledTotal)} = 총 예정 - 체크된 항목.` },
+{ title:'Paid 공식', text:`체크된 항목 ${fmt(s.paidTotal)}.` },
+{ title:'남은 고정비', text:`Scheduled ${fmt(s.remainingTotal)} = Scheduled - paid.` },
+{ title:'Biweekly 리스', text:`차량 리스 발생: ${entries.filter(e => e.baseId === 'lease').map(e => displayMMDD(e.dueDate)).join(', ') || '없음'}.` },
+{ title:'변동 카드', text: s.variableBlank.length ? s.variableBlank.map(v => v.name).join(' · ') + ' 금액 미입력으로 제외.' : '변동 카드 모두 활성화됨.' }
+];
+$('notesPanel').innerHTML = noteBlocks.map(n => `<div class="item"><div><div class="name">${n.title}</div><div class="small">${n.text}</div></div></div>`).join('');
+
+function renderList(target, items, emptyText) {
+if(!items.length) {
+$(target).innerHTML = `<div class="empty">${emptyText}</div>`;
+return;
+}
+$(target).innerHTML = items.map(item => `
+<div class="item">
+<div>
+<div class="name">${item.name}</div>
+<div class="meta">
+<span class="badge ${badgeClass(item.type)}">${item.type}</span>
+<span class="badge">${item.recurrence}</span>
+<span class="small">${displayMMDD(item.dueDate)} 결제</span>
+</div>
+</div>
+<div class="amt">${fmt(item.amount)}</div>
+</div>
+`).join('');
+}
+
+renderList('paidList', s.paid, '완료된 지출 없음.');
+renderList('remainingList', s.unpaid, '남은 지출 없음.');
+$('paidCount').textContent = `${s.paid.length} 항목`;
+$('remainingCount').textContent = `${s.unpaid.length} 항목`;
+
+document.querySelectorAll('[data-key]').forEach(box => {
+box.addEventListener('change', (e) => {
+const key = e.target.dataset.key;
+if(e.target.checked) state.paid.add(key); else state.paid.delete(key);
+render();
+});
+});
+}
+
+function init(){
+const today = new Date();
+$('selectedDate').value = toDateInputValue(today);
+$('showJoint').addEventListener('change', e => { state.filters.joint = e.target.checked; render(); });
+$('showPersonal').addEventListener('change', e => { state.filters.personal = e.target.checked; render(); });
+$('selectedDate').addEventListener('input', render);
+$('amexAmount').addEventListener('input', render);
+$('tdAmount').addEventListener('input', render);
+$('themeToggle').addEventListener('click', () => {
+state.theme = state.theme === 'light' ? 'dark' : 'light';
+document.documentElement.setAttribute('data-theme', state.theme);
+$('themeToggle').textContent = state.theme === 'light' ? 'Dark mode' : 'Light mode';
+});
+render();
+}
+
+init();
+</script>
 </body>
 </html>
