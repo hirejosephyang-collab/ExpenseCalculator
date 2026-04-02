@@ -121,7 +121,6 @@ function generateOccurrences(item){
   return occurrences;
 }
 
-
 const data=[
   {id:'rent',n:'월세',a:1915,t:'공동',day:1,fixed:true},
   {id:'food',n:'식비',a:800,t:'공동',day:1,fixed:true},
@@ -137,7 +136,7 @@ const data=[
   {id:'amex',n:'AMEX',a:0,t:'개인',day:17,v:1},
   {id:'td',n:'TD',a:0,t:'개인',day:17,v:1}
 ].flatMap(generateOccurrences);
-  
+
 let ck = new Set();
 let jt = 1;
 let ps = 1;
@@ -161,7 +160,7 @@ function r() {
   
   let su = v => v.reduce((t,x)=>t+x.a,0);
   
-  document.getElementById('sch').textContent = f(su(s));
+  document.getElementById('sch').textContent = f(su(v));
   document.getElementById('pd').textContent = f(su(p));
   document.getElementById('rem').textContent = f(su(s));
   document.getElementById('jt').textContent = f(su(s.filter(x=>x.t=='공동')));
@@ -211,16 +210,4 @@ function toggleF(t){
     document.getElementById('joint').checked = jt;
   } else {
     ps = !ps;
-    document.getElementById('personal').checked = ps;
-  }
-  r();
-}
-
-document.getElementById('amex').oninput = r;
-document.getElementById('td').oninput = r;
-document.getElementById('selDate').onchange = r;
-r();
-  
-</script>
-</body>
-</html>
+    document.getElementById('personal').checked = ps
