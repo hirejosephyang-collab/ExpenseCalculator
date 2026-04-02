@@ -3,13 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>고정비 계산기 (Refactored)</title>
+<title>고정비 계산기 (최종 완성판)</title>
 <style>
-body{font-family:sans-serif;padding:20px;background:#f5f5f5}
-.card{background:#fff;padding:15px;margin-bottom:15px;border-radius:10px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui;background:linear-gradient(135deg,#667eea,#764ba2);padding:1rem;color:#1f2937}
+.card{background:rgba(255,255,255,.95);border-radius:16px;padding:1rem;margin-bottom:1rem}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1rem}
+.kpi{background:#fff;padding:10px;border-radius:10px;text-align:center;font-weight:bold}
 table{width:100%;border-collapse:collapse}
-th,td{border-bottom:1px solid #ddd;padding:8px;text-align:left}
-.amount{text-align:right}
+th,td{padding:.6rem;border-bottom:1px solid #eee}
+.amount{text-align:right;font-weight:bold}
+.badge{padding:3px 6px;border-radius:6px;font-size:.7rem}
+.joint{background:#dbeafe}
+.personal{background:#f3e8ff}
+.paid{background:#dcfce7}
+.unpaid{background:#fef3c7}
+.variable{background:#fecaca}
+.toggle{display:flex;gap:10px;margin-top:10px}
 </style>
 </head>
 <body>
@@ -18,19 +28,24 @@ th,td{border-bottom:1px solid #ddd;padding:8px;text-align:left}
   <input type="date" id="selDate">
   <input type="number" id="amex" placeholder="AMEX">
   <input type="number" id="td" placeholder="TD">
+
+  <div class="toggle">
+    <label><input type="checkbox" id="joint" checked> 공동</label>
+    <label><input type="checkbox" id="personal" checked> 개인</label>
+  </div>
 </div>
 
-<div class="card">
-  <div>Scheduled: <span id="sch"></span></div>
-  <div>Paid: <span id="pd"></span></div>
-  <div>Remaining: <span id="rem"></span></div>
+<div class="kpis">
+  <div class="kpi">Scheduled<br><span id="sch"></span></div>
+  <div class="kpi">Paid<br><span id="pd"></span></div>
+  <div class="kpi">Remaining<br><span id="rem"></span></div>
 </div>
 
 <div class="card">
 <table>
 <thead>
 <tr>
-<th>✓</th><th>항목</th><th>금액</th><th>일자</th><th>구분</th>
+<th>✓</th><th>항목</th><th>금액</th><th>일자</th><th>주기</th><th>구분</th><th>상태</th>
 </tr>
 </thead>
 <tbody id="tbl"></tbody>
@@ -38,84 +53,100 @@ th,td{border-bottom:1px solid #ddd;padding:8px;text-align:left}
 </div>
 
 <script>
-const rawData=[
-  {id:'rent',n:'월세',a:1915,t:'공동',day:1},
-  {id:'food',n:'식비',a:800,t:'공동',day:1},
-  {id:'phone',n:'통신',a:158.2,t:'공동',day:10},
-  {id:'youtube',n:'Youtube',a:19.2,t:'개인',day:18},
-  {id:'netflix',n:'Netflix',a:9.03,t:'개인',day:18},
-  {id:'rbc',n:'RBC',a:16.95,t:'개인',day:25},
-  {id:'prime',n:'Amazon',a:11.29,t:'개인',day:27},
+const base=[
+  {id:'rent',n:'월세',a:1915,t:'공동',day:1,fixed:true},
+  {id:'food',n:'식비',a:800,t:'공동',day:1,fixed:true},
+  {id:'phone',n:'통신',a:158.2,t:'공동',day:10,fixed:true},
+  {id:'youtube',n:'Youtube',a:19.2,t:'개인',day:18,fixed:true},
+  {id:'netflix',n:'Netflix',a:9.03,t:'개인',day:18,fixed:true},
+  {id:'rbc',n:'RBC',a:16.95,t:'개인',day:25,fixed:true},
+  {id:'prime',n:'Amazon',a:11.29,t:'개인',day:27,fixed:true},
+  {id:'home',n:'주택보험',a:45.32,t:'공동',cycle:'monthly',day:23},
+  {id:'car',n:'차량보험',a:314.62,t:'공동',cycle:'monthly',day:23},
+  {id:'lease1',n:'리스1',a:240.86,t:'공동',cycle:'biweekly',start:1},
+  {id:'lease2',n:'리스2',a:240.86,t:'공동',cycle:'biweekly',start:15},
   {id:'amex',n:'AMEX',a:0,t:'개인',day:17,v:true},
   {id:'td',n:'TD',a:0,t:'개인',day:17,v:true}
 ];
 
-let checked=new Set();
+let checked=new Set(JSON.parse(localStorage.getItem('checked')||'[]'));
 
-function format(v){
-  return new Intl.NumberFormat('ko-KR',{style:'currency',currency:'CAD'}).format(v||0);
-}
+function save(){localStorage.setItem('checked',JSON.stringify([...checked]));}
 
-function getMonthData(){
-  const sel=document.getElementById('selDate').value;
-  if(!sel) return [];
-  const month=sel.slice(5,7);
+function fmt(v){return new Intl.NumberFormat('ko-KR',{style:'currency',currency:'CAD'}).format(v||0);}
+
+function gen(){
+  const date=document.getElementById('selDate').value;
+  if(!date) return [];
+  const m=date.slice(5,7);
 
   const amex=parseFloat(document.getElementById('amex').value)||0;
   const td=parseFloat(document.getElementById('td').value)||0;
 
-  return rawData.map(x=>{
+  let out=[];
+
+  base.forEach(x=>{
     let amount=x.a;
     if(x.id==='amex') amount=amex;
     if(x.id==='td') amount=td;
 
-    return {
-      ...x,
-      a:amount,
-      d:`${month}-${String(x.day).padStart(2,'0')}`,
-      key:x.id+"_"+month
-    };
+    if(x.cycle==='biweekly'){
+      [x.start,x.start+14].forEach(d=>{
+        if(d<=31) out.push({...x,a:amount,d:`${m}-${String(d).padStart(2,'0')}`,key:`${x.id}_${m}_${d}`});
+      });
+    } else {
+      out.push({...x,a:amount,d:`${m}-${String(x.day).padStart(2,'0')}`,key:`${x.id}_${m}`});
+    }
   });
+
+  return out;
 }
 
 function render(){
-  const data=getMonthData();
+  const data=gen();
 
-  const paid=data.filter(x=>checked.has(x.key));
-  const unpaid=data.filter(x=>!checked.has(x.key));
+  const jt=document.getElementById('joint').checked;
+  const ps=document.getElementById('personal').checked;
+
+  const filtered=data.filter(x=>((jt&&x.t==='공동')||(ps&&x.t==='개인')));
+
+  const paid=filtered.filter(x=>checked.has(x.key));
+  const unpaid=filtered.filter(x=>!checked.has(x.key));
 
   const sum=v=>v.reduce((t,x)=>t+x.a,0);
 
-  document.getElementById('sch').textContent=format(sum(data));
-  document.getElementById('pd').textContent=format(sum(paid));
-  document.getElementById('rem').textContent=format(sum(unpaid));
+  document.getElementById('sch').textContent=fmt(sum(filtered));
+  document.getElementById('pd').textContent=fmt(sum(paid));
+  document.getElementById('rem').textContent=fmt(sum(unpaid));
 
-  document.getElementById('tbl').innerHTML=data.map(x=>{
-    const isChecked=checked.has(x.key);
+  document.getElementById('tbl').innerHTML=filtered.map(x=>{
+    const c=checked.has(x.key);
+    const status=c?'완료':(x.v&&x.a===0?'미입력':'예정');
+    const cls=c?'paid':(x.v&&x.a===0?'variable':'unpaid');
+
     return `
     <tr onclick="toggle('${x.key}')">
-      <td><input type="checkbox" ${isChecked?'checked':''} onclick="event.stopPropagation();toggle('${x.key}')"></td>
+      <td><input type="checkbox" ${c?'checked':''} onclick="event.stopPropagation();toggle('${x.key}')"></td>
       <td>${x.n}</td>
-      <td class="amount">${format(x.a)}</td>
+      <td class="amount">${fmt(x.a)}</td>
       <td>${x.d}</td>
-      <td>${x.t}</td>
-    </tr>
-    `;
+      <td>${x.cycle||'월'}</td>
+      <td><span class="badge ${x.t==='공동'?'joint':'personal'}">${x.t}</span></td>
+      <td><span class="badge ${cls}">${status}</span></td>
+    </tr>`;
   }).join('');
 }
 
-function toggle(key){
-  if(checked.has(key)) checked.delete(key);
-  else checked.add(key);
+function toggle(k){
+  checked.has(k)?checked.delete(k):checked.add(k);
+  save();
   render();
 }
 
-// 이벤트
-['selDate','amex','td'].forEach(id=>{
+['selDate','amex','td','joint','personal'].forEach(id=>{
   document.getElementById(id).addEventListener('input',render);
 });
 
-// 초기값
 const today=new Date();
 document.getElementById('selDate').value=today.toISOString().slice(0,10);
 render();
