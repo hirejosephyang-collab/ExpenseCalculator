@@ -1,213 +1,125 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgwIiBoZWlnaHQ9IjE4MCIgdmlld0JveD0iMCAwIDE4MCAxODAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxjaXJjbGUgY3g9IjkwIiBjeT0iOTAiIHI9IjkwIiBmaWxsPSIjMjNiOTBhIi8+CjxwYXRoIGQ9Ik0xMjAgMTI1QzEyMCAxMzAgMTE1IDEzNSAxMTAgMTM1SDEwMEM5NSA5NSAxMDIgMTAyIDEwMiAxMDJIMTU4VjEwMkMxNTggMTAyIDE1NSAxMDIgMTUyIDEwMkMxNDkgMTAyIDE0NiAxMDIgMTQ0IDEwMkMxNDIgMTAyIDE0MCAxMDIgMTM4IDEwMkMxMzYgMTAyIDEzNCAxMDIgMTMyIDEwMkMxMzAgMTAyIDEyOCAxMDIgMTI2IDEwMkMxMjQgMTAyMTIyIDEwMiAxMjAgMTAySDEyMFYyNUgxMjBWMTI1WiIgZmlsbD0id2hpdGUiLz4KPHRleHQgeD0iOTAiIHk9IjEwNSIgZm9udC1mYW1pbHk9IkFwcGxlLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjM4IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIkPC90ZXh0Pgo8L3N2Zz4K">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#23b90a">
-  <title>고정비 계산기 - 완성</title>
-  <style>
-    *{margin:0;padding:0;box-sizing:border-box}body{font-family:system-ui,-apple-system,sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#1f2937;line-height:1.6;padding:1rem;min-height:100vh}.container{max-width:100%;margin:0 auto}.header{text-align:center;background:rgba(255,255,255,.95);backdrop-filter:blur(20px);border-radius:24px;padding:1.5rem;margin-bottom:1.5rem;box-shadow:0 10px 30px rgba(0,0,0,.2)}.header h1{font-size:1.6rem;font-weight:800;background:linear-gradient(135deg,#4f46e5,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:.25rem}.header p{color:#6b7280;font-size:.95rem}.card{background:rgba(255,255,255,.95);backdrop-filter:blur(20px);border-radius:20px;padding:1.5rem;margin-bottom:1.25rem;box-shadow:0 8px 32px rgba(0,0,0,.12);border:1px solid rgba(255,255,255,.2)}.date-row{display:flex;gap:.75rem;margin-bottom:1rem;flex-wrap:wrap}.date-row input{flex:1;min-width:120px;padding:.875rem 1rem;border:2px solid #e5e7eb;border-radius:12px;font-size:.95rem;font-weight:500;transition:all .2s}.date-row input:focus{outline:none;border-color:#6366f1;box-shadow:0 0 0 3px rgba(99,102,241,.2);transform:translateY(-1px)}.toggle-row{display:flex;gap:.75rem;margin-top:.5rem}.toggle{flex:1;display:flex;align-items:center;justify-content:center;gap:.5rem;padding:.875rem .75rem;border:2px solid #e5e7eb;border-radius:12px;cursor:pointer;background:#fff;transition:all .2s;font-weight:500;font-size:.9rem}.toggle:hover{border-color:#d1d5db;transform:translateY(-1px)}.toggle.active{border-color:#6366f1;background:#eef2ff}.toggle input[type=checkbox]{width:20px;height:20px;accent-color:#6366f1;margin:0}.kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin-bottom:1.5rem}@media (min-width:500px){.kpis{grid-template-columns:repeat(5,1fr)}}.kpi{text-align:center;padding:1.25rem .75rem;border-radius:16px;background:linear-gradient(135deg,rgba(255,255,255,.9),rgba(255,255,255,.7));box-shadow:0 8px 25px rgba(0,0,0,.15);transition:transform .2s}.kpi:hover{transform:translateY(-2px)}.kpi-label{font-size:.75rem;color:#6b7280;margin-bottom:.25rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em}.kpi-value{font-size:1.4rem;font-weight:800;color:#1f2937;margin-bottom:.25rem}.kpi-meta{font-size:.75rem;color:#9ca3af}.table-card{background:rgba(255,255,255,.95);backdrop-filter:blur(20px);border-radius:20px;overflow:hidden;box-shadow:0 20px 40px rgba(0,0,0,.15);margin-bottom:1.5rem}.table-header{background:linear-gradient(135deg,#f8fafc 0%,#e2e8f0 100%);padding:1.25rem 1.5rem;font-size:1rem;font-weight:700;color:#1e293b;display:flex;justify-content:space-between;align-items:center}.table-wrapper{overflow-x:auto;-webkit-overflow-scrolling:touch}.table{min-width:650px;width:100%;border-collapse:collapse;font-size:.88rem}@media (max-width:500px){.table{font-size:.82rem;min-width:580px}}th,td{padding:.875rem .625rem;text-align:left;border-bottom:1px solid #f1f5f9}th{font-weight:700;color:#374151;font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;background:rgba(248,250,252,.8)}.amount{text-align:right;font-weight:700;color:#059669}.badge{padding:.375rem .625rem;border-radius:8px;font-size:.7rem;font-weight:700}.joint{background:linear-gradient(135deg,#dbeafe,#bfdbfe);color:#1e40af}.personal{background:linear-gradient(135deg,#f3e8ff,#e9d5ff);color:#7c3aed}.paid{background:linear-gradient(135deg,#dcfce7,#bbf7d0);color:#166534}.unpaid{background:linear-gradient(135deg,#fef3c7,#fde68a);color:#92400e}.future{background:linear-gradient(135deg,#e0e7ff,#c7d2fe);color:#3730a3}.variable{background:linear-gradient(135deg,#fecaca,#fca5a5);color:#dc2626}.checkbox{width:22px;height:22px;accent-color:#10b981;cursor:pointer}.split{display:grid;grid-template-columns:1fr;gap:1rem}@media (min-width:500px){.split{grid-template-columns:1fr 1fr}}.split-card{background:rgba(255,255,255,.95);backdrop-filter:blur(20px);border-radius:20px;padding:1.5rem;box-shadow:0 10px 30px rgba(0,0,0,.15)}.split-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}.split-title{font-size:1.1rem;font-weight:700;color:#1e293b}.split-count{font-size:.95rem;color:#6b7280;font-weight:600}.item-row{display:flex;justify-content:space-between;align-items:center;padding:1rem 0;border-bottom:1px solid #f1f5f9}.item-row:last-child{border-bottom:none}.item-name{font-weight:600;color:#374151;font-size:.95rem}.item-amount{font-weight:800;color:#059669;font-size:1.1rem}.empty{text-align:center;padding:2.5rem 1rem;color:#9ca3af;font-style:italic;font-size:.95rem}.footer{text-align:center;padding:2rem 0;color:rgba(255,255,255,.9);font-size:.85rem;text-shadow:0 1px 2px rgba(0,0,0,.3)}@media (max-width:450px){th:nth-child(5),td:nth-child(5),th:nth-child(6),td:nth-child(6){display:none}.table{min-width:400px}}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>고정비 계산기 (Refactored)</title>
+<style>
+body{font-family:sans-serif;padding:20px;background:#f5f5f5}
+.card{background:#fff;padding:15px;margin-bottom:15px;border-radius:10px}
+table{width:100%;border-collapse:collapse}
+th,td{border-bottom:1px solid #ddd;padding:8px;text-align:left}
+.amount{text-align:right}
+</style>
 </head>
 <body>
-<div class="container">
-  <div class="header">
-    <h1>📊 고정비</h1>
-    <p>전체 부담 기준 </p>
-  </div>
 
-  <div class="card">
-    <div class="date-row">
-      <div>
-        <label>선택일</label>
-        <input type="date" id="selDate" value="2026-04-15">
-      </div>
-      <div>
-        <label>AMEX</label>
-        <input type="number" id="amex" step="0.01" placeholder="0">
-      </div>
-    </div>
-    <div class="date-row">
-      <div>
-        <label>TD Visa</label>
-        <input type="number" id="td" step="0.01" placeholder="0">
-      </div>
-      <div></div>
-    </div>
-    <div class="toggle-row">
-      <div class="toggle active" onclick="toggleF('joint')">
-        <input type="checkbox" id="joint" checked>공동
-      </div>
-      <div class="toggle active" onclick="toggleF('personal')">
-        <input type="checkbox" id="personal" checked>개인
-      </div>
-    </div>
-  </div>
-
-  <div class="kpis">
-    <div class="kpi">
-      <div class="kpi-label">Scheduled</div>
-      <div class="kpi-value" id="sch">$2,356</div>
-    </div>
-    <div class="kpi">
-      <div class="kpi-label">Paid</div>
-      <div class="kpi-value" id="pd">$0</div>
-    </div>
-    <div class="kpi">
-      <div class="kpi-label">남은</div>
-      <div class="kpi-value" id="rem">$2,356</div>
-    </div>
-    <div class="kpi">
-      <div class="kpi-label">공동</div>
-      <div class="kpi-value" id="jt">$1,656</div>
-    </div>
-    <div class="kpi">
-      <div class="kpi-label">개인</div>
-      <div class="kpi-value" id="per">$700</div>
-    </div>
-  </div>
-
-  <div class="table-card">
-    <div class="table-header">
-      📋 고정비 목록 <span id="cnt">(13개)</span>
-    </div>
-    <div class="table-wrapper">
-      <table>
-        <thead>
-          <tr>
-            <th>✓</th><th>항목</th><th>금액</th><th>일자</th><th>주기</th><th>구분</th>
-          </tr>
-        </thead>
-        <tbody id="tbl"></tbody>
-      </table>
-    </div>
-  </div>
-
-  <div class="split">
-    <div class="split-card">
-      <div class="split-header">
-        <div class="split-title">✅ 완료</div>
-        <div class="split-count" id="dcnt">0개</div>
-      </div>
-      <div id="dlist"></div>
-    </div>
-    <div class="split-card">
-      <div class="split-header">
-        <div class="split-title">⏳ 남음</div>
-        <div class="split-count" id="lcnt">13개</div>
-      </div>
-      <div id="llist"></div>
-    </div>
-  </div>
+<div class="card">
+  <input type="date" id="selDate">
+  <input type="number" id="amex" placeholder="AMEX">
+  <input type="number" id="td" placeholder="TD">
 </div>
+
+<div class="card">
+  <div>Scheduled: <span id="sch"></span></div>
+  <div>Paid: <span id="pd"></span></div>
+  <div>Remaining: <span id="rem"></span></div>
+</div>
+
+<div class="card">
+<table>
+<thead>
+<tr>
+<th>✓</th><th>항목</th><th>금액</th><th>일자</th><th>구분</th>
+</tr>
+</thead>
+<tbody id="tbl"></tbody>
+</table>
+</div>
+
 <script>
-function generateOccurrences(item){
-  const occurrences = [];
-  const months = [4,5,6,7,8,9,10,11,12];
-  months.forEach(m => {
-    const monthStr = m.toString().padStart(2,'0');
-    if(item.fixed || item.cycle==='monthly'){
-      occurrences.push({...item, d:`${monthStr}-${item.day.toString().padStart(2,'0')}`});
-    }else if(item.cycle==='biweekly'){
-      occurrences.push({...item, d:`${monthStr}-${item.start.toString().padStart(2,'0')}`});
-      let secondDay = item.start + 14;
-      if(secondDay <= 31) occurrences.push({...item, d:`${monthStr}-${secondDay.toString().padStart(2,'0')}`});
-    }
+const rawData=[
+  {id:'rent',n:'월세',a:1915,t:'공동',day:1},
+  {id:'food',n:'식비',a:800,t:'공동',day:1},
+  {id:'phone',n:'통신',a:158.2,t:'공동',day:10},
+  {id:'youtube',n:'Youtube',a:19.2,t:'개인',day:18},
+  {id:'netflix',n:'Netflix',a:9.03,t:'개인',day:18},
+  {id:'rbc',n:'RBC',a:16.95,t:'개인',day:25},
+  {id:'prime',n:'Amazon',a:11.29,t:'개인',day:27},
+  {id:'amex',n:'AMEX',a:0,t:'개인',day:17,v:true},
+  {id:'td',n:'TD',a:0,t:'개인',day:17,v:true}
+];
+
+let checked=new Set();
+
+function format(v){
+  return new Intl.NumberFormat('ko-KR',{style:'currency',currency:'CAD'}).format(v||0);
+}
+
+function getMonthData(){
+  const sel=document.getElementById('selDate').value;
+  if(!sel) return [];
+  const month=sel.slice(5,7);
+
+  const amex=parseFloat(document.getElementById('amex').value)||0;
+  const td=parseFloat(document.getElementById('td').value)||0;
+
+  return rawData.map(x=>{
+    let amount=x.a;
+    if(x.id==='amex') amount=amex;
+    if(x.id==='td') amount=td;
+
+    return {
+      ...x,
+      a:amount,
+      d:`${month}-${String(x.day).padStart(2,'0')}`,
+      key:x.id+"_"+month
+    };
   });
-  return occurrences;
 }
 
-const data=[
-  {id:'rent',n:'월세',a:1915,t:'공동',day:1,fixed:true},
-  {id:'food',n:'식비',a:800,t:'공동',day:1,fixed:true},
-  {id:'phone',n:'통신',a:158.2,t:'공동',day:10,fixed:true},
-  {id:'Youtube',n:'Youtube',a:19.2,t:'개인',day:18,fixed:true},
-  {id:'net',n:'Netflix',a:9.03,t:'개인',day:18,fixed:true},
-  {id:'rbc',n:'RBC',a:16.95,t:'개인',day:25,fixed:true},
-  {id:'prime',n:'Amazon',a:11.29,t:'개인',day:27,fixed:true},
-  {id:'home',n:'주택보험',a:45.32,t:'공동',day:23,cycle:'monthly'},
-  {id:'car',n:'차량 보험',a:314.62,t:'공동',day:23,cycle:'monthly'},
-  {id:'lease1',n:'차량 리스 #1',a:240.86,t:'공동',cycle:'biweekly',start:1},
-  {id:'lease2',n:'차량 리스 #2',a:240.86,t:'공동',cycle:'biweekly',start:15},
-  {id:'amex',n:'AMEX',a:0,t:'개인',day:17,v:1},
-  {id:'td',n:'TD',a:0,t:'개인',day:17,v:1}
-].flatMap(generateOccurrences);
+function render(){
+  const data=getMonthData();
 
-let ck = new Set();
-let jt = 1;
-let ps = 1;
+  const paid=data.filter(x=>checked.has(x.key));
+  const unpaid=data.filter(x=>!checked.has(x.key));
 
-function f(v) {
-  return new Intl.NumberFormat('ko-KR', {style:'currency',currency:'CAD'}).format(v||0);
-}
+  const sum=v=>v.reduce((t,x)=>t+x.a,0);
 
-function r() {
-  let selDate = document.getElementById('selDate').value;
-  let selMonth = selDate.slice(5,7);
-  
-  let ae = +document.getElementById('amex').value||0;
-  let td = +document.getElementById('td').value||0;
-  data.find(x=>x.id=='amex').a = ae;
-  data.find(x=>x.id=='td').a = td;
-  
-  let v = data.filter(x=>(jt&&x.t=='공동')||(ps&&x.t=='개인')&&x.d.slice(0,2)==selMonth);
-  let s = v.filter(x=>!ck.has(x.id));
-  let p = v.filter(x=>ck.has(x.id));
-  
-  let su = v => v.reduce((t,x)=>t+x.a,0);
-  
-  document.getElementById('sch').textContent = f(su(v));
-  document.getElementById('pd').textContent = f(su(p));
-  document.getElementById('rem').textContent = f(su(s));
-  document.getElementById('jt').textContent = f(su(s.filter(x=>x.t=='공동')));
-  document.getElementById('per').textContent = f(su(s.filter(x=>x.t=='개인')));
-  document.getElementById('cnt').textContent = '('+v.length+'개)';
-  document.getElementById('dcnt').textContent = p.length+'개';
-  document.getElementById('lcnt').textContent = s.length+'개';
-  
-  document.getElementById('tbl').innerHTML = v.map(x=>{
-    let c = ck.has(x.id);
-    let b = c?'paid':(x.v&&x.a==0)?'variable':'unpaid';
-    let st = c?'완료':(x.v&&x.a==0)?'미입력':'예정';
-    return `<tr onclick="tc('${x.id}')">
-      <td><input class="checkbox" type="checkbox" ${c?'checked':''} onchange="event.stopPropagation();tc('${x.id}')"></td>
+  document.getElementById('sch').textContent=format(sum(data));
+  document.getElementById('pd').textContent=format(sum(paid));
+  document.getElementById('rem').textContent=format(sum(unpaid));
+
+  document.getElementById('tbl').innerHTML=data.map(x=>{
+    const isChecked=checked.has(x.key);
+    return `
+    <tr onclick="toggle('${x.key}')">
+      <td><input type="checkbox" ${isChecked?'checked':''} onclick="event.stopPropagation();toggle('${x.key}')"></td>
       <td>${x.n}</td>
-      <td class="amount">${f(x.a)}</td>
+      <td class="amount">${format(x.a)}</td>
       <td>${x.d}</td>
-      <td>${x.cycle||'월'}</td>
-      <td><span class="badge ${x.t=='공동'?'joint':'personal'}">${x.t}</span></td>
-      <td><span class="badge ${b}">${st}</span></td>
-    </tr>`;
+      <td>${x.t}</td>
+    </tr>
+    `;
   }).join('');
-  
-  document.getElementById('dlist').innerHTML = p.length ? p.map(x=>
-    `<div class="item-row">
-      <span class="item-name">${x.n}</span>
-      <span class="item-amount">${f(x.a)}</span>
-    </div>`
-  ).join('') : '<div class="empty">완료없음</div>';
-  
-  document.getElementById('llist').innerHTML = s.length ? s.map(x=>
-    `<div class="item-row">
-      <span class="item-name">${x.n}</span>
-      <span class="item-amount">${f(x.a)}</span>
-    </div>`
-  ).join('') : '<div class="empty">남은없음</div>';
 }
 
-function tc(id){
-  ck.has(id) ? ck.delete(id) : ck.add(id);
-  r();
+function toggle(key){
+  if(checked.has(key)) checked.delete(key);
+  else checked.add(key);
+  render();
 }
 
-function toggleF(t){
-  if(t=='joint'){
-    jt = !jt;
-    document.getElementById('joint').checked = jt;
-  } else {
-    ps = !ps;
-    document.getElementById('personal').checked = ps
+// 이벤트
+['selDate','amex','td'].forEach(id=>{
+  document.getElementById(id).addEventListener('input',render);
+});
+
+// 초기값
+const today=new Date();
+document.getElementById('selDate').value=today.toISOString().slice(0,10);
+render();
+</script>
+
+</body>
+</html>
