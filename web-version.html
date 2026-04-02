@@ -94,7 +94,8 @@
     .footer-note{font-size:var(--text-xs);color:var(--color-text-muted);padding-bottom:var(--space-8)}
     @media (max-width: 1100px){.plan,.controls,.kpis,.table-wrap,.split{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
     @media (max-width: 720px){.app{padding:var(--space-4)}.control-grid{grid-template-columns:1fr}.kpis{grid-template-columns:1fr}th:nth-child(4),td:nth-child(4){display:none}.item{grid-template-columns:1fr}.topbar{align-items:flex-start}}
-    .accent-income{background:linear-gradient(180deg, color-mix(in srgb, var(--color-success-highlight) 70%, var(--color-surface)
+    .accent-income{background:linear-gradient(180deg, color-mix(in srgb, var(--color-success-highlight) 70%, var(--color-surface) 30%), var(--color-surface))}
+.accent-net{background:linear-gradient(180deg, color-mix(in srgb, var(--color-primary-highlight)
   </style>
 </head>
 <body>
@@ -174,11 +175,16 @@
       </article>
     </section>
 
-  <section class="kpis">
-  <article class="card kpi"><div class="label">Scheduled total</div><div class="value" id="scheduledTotal">$0.00</div><div class="meta" id="scheduledMeta">월 전체 예정 - 체크된 항목</div></article>
-  <article class="card kpi accent-paid"><div class="label">Paid total</div><div class="value" id="paidTotal">$0.00</div><div class="meta">체크된 항목</div></article>
-  <article class="card kpi accent-remaining"><div class="label">남은 고정비</div><div class="value" id="remainingTotal">$0.00</div><div class="meta">Scheduled - paid</div></article>
-  <article class="card kpi accent-joint"><div class="label">공동 총액</div><div class="value" id="jointTotal">$
+<section class="kpis">
+  <article class="card kpi">
+    <div class="label">Scheduled total</div>
+    <div class="value" id="scheduledTotal">$0.00</div>
+    <div class="meta" id="scheduledMeta">월 전체 예정 - 체크된 항목</div>
+  </article>
+  <article class="card kpi accent-paid">
+    <div class="label">Paid total</div>
+    <div class="value" id="paidTotal">$0.00</div>
+    <div class="meta">체크된 항목</div>
 
     <section class="table-wrap">
       <article class="card panel">
@@ -263,24 +269,23 @@
       return `${m}-${d}`;
     }
     function monthEnd(date){ return new Date(date.getFullYear(), date.getMonth()+1, 0); }
-    function normalizeVariableAmounts(){
-      const amex = $('amexAmount').value === '' ? null : Number($('amexAmount').value);
-      const td = $('tdAmount').value === ''
-      return { amex, td };
-    }
+function normalizeVariableAmounts(){
+  const amex = $('amexAmount').value === '' ? null : Number($('amexAmount').value);
+  const td = $('tdAmount').value === '' ? null : Number($('tdAmount').value);
+  return { amex, td, debt: null };  // debt 없으므로 null
+}
     function buildOccurrences(selectedDate){
-      const year = selectedDate.getFullYear();
-      const month = selectedDate.getMonth();
-      const endOfMonth = monthEnd(selectedDate);
-      const vars = normalizeVariableAmounts();
-      const income = $('Income').value === '' ? null : Number($('Income').value);
-      const debtAmount = $('debtAmount') ? ($('debtAmount').value === '' ? null : Number($('debtAmount').value)) : null;
-      const entries = [];
+  const year = selectedDate.getFullYear();
+  const month = selectedDate.getMonth();
+  const endOfMonth = monthEnd(selectedDate);
+  const vars = normalizeVariableAmounts();
+  const income = $('Income').value === '' ? null : Number($('Income').value);
+  const entries = [];
 
       baseExpenses.forEach(exp => {
-        const amount = exp.id === 'amex' ? vars.amex : 
+const amount = exp.id === 'amex' ? vars.amex : 
                exp.id === 'td' ? vars.td : 
-               exp.id === 'debt' ? vars.debt || null : 
+               exp.id === 'debt' ? vars.debt :  // ✅ 단순히 vars.debt (null)
                exp.amount;
         if(exp.variable && (amount === null || Number.isNaN(amount))) {
           entries.push({
