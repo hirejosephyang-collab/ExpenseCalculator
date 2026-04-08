@@ -697,13 +697,15 @@ function render() {
   const scheduled = sum(data);
   const paid = sum(done);
   const leftCost = sum(left);
-  const incomeBasedRemaining = incomeVal > 0 ? Math.abs(incomeVal - scheduled) : leftCost;
+  const sharedRemaining = sum(left.filter(x => x.t === '공동'));
+  const personalRemaining = sum(left.filter(x => x.t === '개인'));
+  const incomeBasedRemaining = incomeVal > 0 ? Math.abs(leftCost - incomeVal) : leftCost;
 
   document.getElementById('sch').textContent = fmt(scheduled);
   document.getElementById('pd').textContent  = fmt(paid);
   document.getElementById('rem').textContent = fmt(incomeBasedRemaining);
-  document.getElementById('jt').textContent  = fmt(sum(left.filter(x => x.t === '공동')));
-  document.getElementById('per').textContent = fmt(sum(left.filter(x => x.t === '개인')));
+  document.getElementById('jt').textContent  = fmt(sharedRemaining);
+  document.getElementById('per').textContent = fmt(personalRemaining);
   document.getElementById('cnt').textContent = `${data.length}개`;
   document.getElementById('dcnt').textContent = `${done.length}개`;
   document.getElementById('lcnt').textContent = `${left.length}개`;
