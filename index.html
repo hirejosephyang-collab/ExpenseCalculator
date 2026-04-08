@@ -183,6 +183,32 @@ body {
   outline: none;
 }
 
+.field input, .field select, .field textarea {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.field input[type="date"] {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-height: 56px;
+  line-height: 1.2;
+  padding-right: 16px;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.field input[type="date"]::-webkit-date-and-time-value {
+  text-align: left;
+}
+
+.field input[type="date"]::-webkit-calendar-picker-indicator {
+  opacity: 1;
+  margin: 0;
+}
+
 .field input:focus {
   border-color: var(--accent);
   box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 15%, transparent);
