@@ -642,6 +642,47 @@ let checked = new Map(); // key → true
 let showJoint    = true;
 let showPersonal = true;
 
+const STORAGE_KEY = 'gojungbi-state-v1';
+
+function saveState() {
+  const state = {
+    selDate: document.getElementById('selDate')?.value || '',
+    income: document.getElementById('income')?.value || '',
+    amex: document.getElementById('amex')?.value || '',
+    td: document.getElementById('td')?.value || '',
+    debt: document.getElementById('debt')?.value || '',
+    showJoint,
+    showPersonal,
+    darkMode,
+    checked: Array.from(checked.keys())
+  };
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return false;
+    const state = JSON.parse(raw);
+    if (state.selDate) document.getElementById('selDate').value = state.selDate;
+    if (state.income !== undefined) document.getElementById('income').value = state.income;
+    if (state.amex !== undefined) document.getElementById('amex').value = state.amex;
+    if (state.td !== undefined) document.getElementById('td').value = state.td;
+    if (state.debt !== undefined) document.getElementById('debt').value = state.debt;
+    if (typeof state.showJoint === 'boolean') showJoint = state.showJoint;
+    if (typeof state.showPersonal === 'boolean') showPersonal = state.showPersonal;
+    if (typeof state.darkMode === 'boolean') darkMode = state.darkMode;
+    checked = new Map((state.checked || []).map(k => [k, true]));
+    document.getElementById('toggleJoint').classList.toggle('on', showJoint);
+    document.getElementById('togglePersonal').classList.toggle('on', showPersonal);
+    root.setAttribute('data-theme', darkMode ? 'dark' : 'light');
+    document.getElementById('themeBtn').textContent = darkMode ? '☀️' : '🌙';
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
 // ─── 유틸 ───
 function fmt(v) {
   return new Intl.NumberFormat('en-CA', {style:'currency', currency:'CAD', minimumFractionDigits:2}).format(v || 0);
@@ -773,7 +814,9 @@ function toggle(type) {
 });
 
 // ─── 초기화 ───
-document.getElementById('selDate').value = new Date().toISOString().slice(0, 10);
+if (!loadState()) {
+  document.getElementById('selDate').value = new Date().toISOString().slice(0, 10);
+}
 render();
 </script>
 </body>
