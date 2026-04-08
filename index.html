@@ -1,232 +1,711 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#5b6cff">
+<title>고정비 계산기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
+:root {
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
 
-body{
-font-family:-apple-system, BlinkMacSystemFont;
-background:#f2f2f7;
-padding:12px;
-color:#111;
+  --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.8rem);
+  --text-sm: clamp(0.8rem, 0.75rem + 0.25vw, 0.875rem);
+  --text-base: clamp(0.9rem, 0.85rem + 0.25vw, 1rem);
+  --text-lg: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+  --text-xl: clamp(1.2rem, 1.1rem + 0.5vw, 1.5rem);
+
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.25rem;
+  --radius-2xl: 1.5rem;
+  --radius-full: 9999px;
+
+  --transition: 180ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.container{max-width:500px;margin:auto}
-
-/* 헤더 */
-.header{
-text-align:center;
-padding:20px 0;
-font-weight:700;
-font-size:20px;
+[data-theme="light"] {
+  --bg: #f2f3f7;
+  --surface: #ffffff;
+  --surface-2: #f8f9fc;
+  --border: rgba(0,0,0,0.08);
+  --text: #111827;
+  --text-muted: #6b7280;
+  --text-faint: #9ca3af;
+  --accent: #5b6cff;
+  --accent-hover: #4757ee;
+  --accent-light: #eef0ff;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+  --shadow-lg: 0 10px 24px rgba(0,0,0,0.1), 0 4px 8px rgba(0,0,0,0.04);
+  --success-bg: #dcfce7; --success-text: #166534;
+  --warning-bg: #fef3c7; --warning-text: #92400e;
+  --error-bg: #fee2e2; --error-text: #991b1b;
+  --info-bg: #dbeafe; --info-text: #1e40af;
+  --purple-bg: #f3e8ff; --purple-text: #7c3aed;
 }
 
-/* KPI */
-.kpis{
-display:flex;
-flex-direction:column;
-gap:10px;
-margin-bottom:15px;
+[data-theme="dark"] {
+  --bg: #111318;
+  --surface: #1c1e26;
+  --surface-2: #23262f;
+  --border: rgba(255,255,255,0.07);
+  --text: #e5e7ef;
+  --text-muted: #8b8fa8;
+  --text-faint: #555970;
+  --accent: #7b8cff;
+  --accent-hover: #6070ff;
+  --accent-light: #1e2240;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
+  --shadow-lg: 0 10px 24px rgba(0,0,0,0.5);
+  --success-bg: #14532d; --success-text: #86efac;
+  --warning-bg: #78350f; --warning-text: #fde68a;
+  --error-bg: #7f1d1d; --error-text: #fca5a5;
+  --info-bg: #1e3a5f; --info-text: #93c5fd;
+  --purple-bg: #3b1f6e; --purple-text: #d8b4fe;
 }
 
-.kpi{
-background:#fff;
-border-radius:18px;
-padding:14px;
-text-align:center;
-box-shadow:0 4px 12px rgba(0,0,0,0.08);
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
 }
 
-.kpi small{
-color:#8e8e93;
-font-size:13px;
+body {
+  font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: var(--text-base);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100dvh;
+  padding: var(--space-4);
+  transition: background var(--transition), color var(--transition);
 }
 
-.kpi strong{
-display:block;
-margin-top:5px;
-font-size:20px;
+/* ─── Layout ─── */
+.container {
+  max-width: 520px;
+  margin: 0 auto;
 }
 
-/* 카드 리스트 */
-.list{
-display:flex;
-flex-direction:column;
-gap:12px;
+/* ─── Header ─── */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) 0 var(--space-5);
 }
 
-/* 카드 */
-.item{
-background:#fff;
-border-radius:22px;
-padding:16px;
-box-shadow:0 6px 16px rgba(0,0,0,0.1);
-position:relative;
-transition:0.2s;
+.header-title {
+  font-size: var(--text-xl);
+  font-weight: 800;
+  color: var(--text);
 }
 
-/* 체크 상태 */
-.item.checked{
-opacity:0.6;
-transform:scale(0.98);
+.header-sub {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  margin-top: 2px;
 }
 
-/* 체크 버튼 */
-.check{
-position:absolute;
-left:12px;
-top:18px;
-width:26px;
-height:26px;
-border-radius:50%;
-border:2px solid #5b6cff;
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:14px;
-cursor:pointer;
+.theme-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition);
+  font-size: 1.1rem;
+}
+.theme-btn:hover { background: var(--accent-light); color: var(--accent); }
+
+/* ─── Card ─── */
+.card {
+  background: var(--surface);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-5);
+  margin-bottom: var(--space-4);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border);
 }
 
-.item.checked .check{
-background:#5b6cff;
-color:#fff;
+/* ─── Input section ─── */
+.input-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
 }
 
-/* 내용 */
-.content{
-margin-left:40px;
+.input-full { grid-column: 1 / -1; }
+
+.field label {
+  display: block;
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: var(--space-1);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
 }
 
-.title{
-font-weight:700;
-font-size:16px;
+.field input {
+  width: 100%;
+  padding: 0.7rem var(--space-3);
+  border-radius: var(--radius-lg);
+  border: 1.5px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: var(--text-sm);
+  font-family: inherit;
+  font-weight: 500;
+  transition: all var(--transition);
+  outline: none;
 }
 
-.amount{
-font-size:20px;
-font-weight:800;
-margin-top:4px;
+.field input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 15%, transparent);
 }
 
-.meta{
-margin-top:6px;
-font-size:13px;
-color:#6b7280;
+/* ─── Toggle buttons ─── */
+.toggle-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
 }
 
-/* 상태 badge */
-.badge{
-display:inline-block;
-padding:3px 8px;
-border-radius:10px;
-font-size:11px;
-margin-left:6px;
+.toggle-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: 0.65rem;
+  border-radius: var(--radius-lg);
+  border: 1.5px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all var(--transition);
 }
 
-.joint{background:#dbeafe}
-.personal{background:#f3e8ff}
-.paid{background:#dcfce7}
-.unpaid{background:#fef3c7}
-.variable{background:#fecaca}
+.toggle-btn.on {
+  border-color: var(--accent);
+  background: var(--accent-light);
+  color: var(--accent);
+}
 
+.toggle-btn .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: var(--border);
+  transition: all var(--transition);
+}
+
+.toggle-btn.on .dot {
+  background: var(--accent);
+}
+
+/* ─── KPI ─── */
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.kpi {
+  background: var(--surface);
+  border-radius: var(--radius-xl);
+  padding: var(--space-4) var(--space-3);
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border);
+}
+
+.kpi-sub {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.kpi-sub .kpi { padding: var(--space-3); }
+
+.kpi small {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: block;
+  margin-bottom: var(--space-1);
+}
+
+.kpi strong {
+  display: block;
+  font-size: var(--text-lg);
+  font-weight: 800;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+.kpi.highlight strong { color: var(--accent); }
+
+/* ─── Section header ─── */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-4);
+}
+
+.section-title {
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--text);
+}
+
+.section-count {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  background: var(--surface-2);
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  border: 1px solid var(--border);
+}
+
+/* ─── Item cards ─── */
+.items {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.item {
+  background: var(--surface);
+  border-radius: var(--radius-xl);
+  padding: var(--space-4);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  cursor: pointer;
+  transition: all var(--transition);
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+.item:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+.item:active { transform: scale(0.98); box-shadow: var(--shadow-sm); }
+
+.item.done {
+  opacity: 0.55;
+  background: var(--surface-2);
+}
+
+.check-circle {
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  border-radius: var(--radius-full);
+  border: 2px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  color: transparent;
+  transition: all var(--transition);
+  background: var(--surface-2);
+}
+
+.item.done .check-circle {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.item-body { flex: 1; min-width: 0; }
+
+.item-name {
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.item-meta {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.item-right {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.item-amount {
+  font-size: var(--text-base);
+  font-weight: 800;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  display: block;
+  margin-bottom: 3px;
+}
+
+/* ─── Badge ─── */
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.badge-joint    { background: var(--info-bg);   color: var(--info-text); }
+.badge-personal { background: var(--purple-bg); color: var(--purple-text); }
+.badge-paid     { background: var(--success-bg);color: var(--success-text); }
+.badge-unpaid   { background: var(--warning-bg);color: var(--warning-text); }
+.badge-variable { background: var(--error-bg);  color: var(--error-text); }
+
+/* ─── Done/Left split ─── */
+.split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+.split-section .card {
+  margin-bottom: 0;
+}
+
+.split-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--border);
+  font-size: var(--text-sm);
+}
+
+.split-item:last-child { border-bottom: none; }
+
+.split-item-name { color: var(--text); font-weight: 600; }
+.split-item-amount { color: var(--accent); font-weight: 800; font-variant-numeric: tabular-nums; }
+
+.empty {
+  text-align: center;
+  padding: var(--space-6) var(--space-4);
+  color: var(--text-faint);
+  font-size: var(--text-sm);
+}
+
+/* ─── Footer ─── */
+.footer {
+  text-align: center;
+  padding: var(--space-6) 0 var(--space-4);
+  color: var(--text-faint);
+  font-size: var(--text-xs);
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 380px) {
+  body { padding: var(--space-3); }
+  .kpis { grid-template-columns: 1fr 1fr; }
+  .kpis .kpi:last-child { grid-column: 1 / -1; }
+  .split { grid-template-columns: 1fr; }
+}
 </style>
 </head>
-
 <body>
 
 <div class="container">
 
-<div class="header">고정비</div>
+  <!-- Header -->
+  <div class="header">
+    <div>
+      <div class="header-title">💳 고정비</div>
+      <div class="header-sub">전체 부담 기준</div>
+    </div>
+    <button class="theme-btn" id="themeBtn" aria-label="다크모드 전환">🌙</button>
+  </div>
 
-<div class="kpis">
-<div class="kpi"><small>Scheduled</small><strong id="sch"></strong></div>
-<div class="kpi"><small>Paid</small><strong id="pd"></strong></div>
-<div class="kpi"><small>남은</small><strong id="rem"></strong></div>
-</div>
+  <!-- Inputs -->
+  <div class="card">
+    <div class="input-grid">
+      <div class="field">
+        <label>선택일</label>
+        <input type="date" id="selDate">
+      </div>
+      <div class="field">
+        <label>AMEX</label>
+        <input type="number" id="amex" step="0.01" placeholder="0.00">
+      </div>
+      <div class="field">
+        <label>TD Visa</label>
+        <input type="number" id="td" step="0.01" placeholder="0.00">
+      </div>
+    </div>
+    <div class="toggle-row">
+      <button class="toggle-btn on" id="toggleJoint" onclick="toggle('joint')">
+        <span class="dot"></span> 공동
+      </button>
+      <button class="toggle-btn on" id="togglePersonal" onclick="toggle('personal')">
+        <span class="dot"></span> 개인
+      </button>
+    </div>
+  </div>
 
-<div class="list" id="list"></div>
+  <!-- KPIs top row -->
+  <div class="kpis">
+    <div class="kpi">
+      <small>Scheduled</small>
+      <strong id="sch">—</strong>
+    </div>
+    <div class="kpi">
+      <small>Paid</small>
+      <strong id="pd">—</strong>
+    </div>
+    <div class="kpi highlight">
+      <small>남은</small>
+      <strong id="rem">—</strong>
+    </div>
+  </div>
+
+  <!-- KPIs sub row -->
+  <div class="kpi-sub">
+    <div class="kpi">
+      <small>공동 남은</small>
+      <strong id="jt">—</strong>
+    </div>
+    <div class="kpi">
+      <small>개인 남은</small>
+      <strong id="per">—</strong>
+    </div>
+  </div>
+
+  <!-- Item list -->
+  <div class="card">
+    <div class="section-header">
+      <span class="section-title">📋 고정비 목록</span>
+      <span class="section-count" id="cnt">0개</span>
+    </div>
+    <div class="items" id="list"></div>
+  </div>
+
+  <!-- Done / Left split -->
+  <div class="split">
+    <div class="split-section">
+      <div class="card">
+        <div class="section-header">
+          <span class="section-title">✅ 완료</span>
+          <span class="section-count" id="dcnt">0개</span>
+        </div>
+        <div id="done"></div>
+      </div>
+    </div>
+    <div class="split-section">
+      <div class="card">
+        <div class="section-header">
+          <span class="section-title">⏳ 남음</span>
+          <span class="section-count" id="lcnt">0개</span>
+        </div>
+        <div id="left"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">고정비 계산기</div>
 
 </div>
 
 <script>
-const base=[
-{id:'rent',n:'월세',a:1915,t:'공동',day:1},
-{id:'food',n:'식비',a:800,t:'공동',day:1},
-{id:'phone',n:'통신',a:158.2,t:'공동',day:10},
-{id:'youtube',n:'Youtube',a:19.2,t:'개인',day:18},
-{id:'netflix',n:'Netflix',a:9.03,t:'개인',day:18},
-{id:'rbc',n:'RBC',a:16.95,t:'개인',day:25},
-{id:'prime',n:'Amazon',a:11.29,t:'개인',day:27}
+// ─── 다크모드 토글 ───
+const root = document.documentElement;
+let darkMode = false;
+
+document.getElementById('themeBtn').addEventListener('click', () => {
+  darkMode = !darkMode;
+  root.setAttribute('data-theme', darkMode ? 'dark' : 'light');
+  document.getElementById('themeBtn').textContent = darkMode ? '☀️' : '🌙';
+});
+
+// ─── 데이터 ───
+const base = [
+  {id:'rent',    n:'월세',       a:1915,   t:'공동', day:1},
+  {id:'food',    n:'식비',       a:800,    t:'공동', day:1},
+  {id:'phone',   n:'통신',       a:158.20, t:'공동', day:10},
+  {id:'youtube', n:'Youtube',    a:19.20,  t:'개인', day:18},
+  {id:'netflix', n:'Netflix',    a:9.03,   t:'개인', day:18},
+  {id:'rbc',     n:'RBC',        a:16.95,  t:'개인', day:25},
+  {id:'prime',   n:'Amazon',     a:11.29,  t:'개인', day:27},
+  {id:'home',    n:'주택보험',   a:45.32,  t:'공동', day:23},
+  {id:'car',     n:'차량보험',   a:314.62, t:'공동', day:23},
+  {id:'lease1',  n:'차량리스 #1',    a:240.86, t:'공동', cycle:'biweekly', start:1},
+  {id:'lease2',  n:'차량리스 #2',    a:240.86, t:'공동', cycle:'biweekly', start:15},
+  {id:'amex',    n:'AMEX',       a:0,      t:'개인', day:17, v:true},
+  {id:'td',      n:'TD Visa',    a:0,      t:'개인', day:17, v:true}
 ];
 
-let checked=new Set(JSON.parse(localStorage.getItem('checked')||'[]'));
+let checked = new Map(); // key → true
+let showJoint    = true;
+let showPersonal = true;
 
-function save(){
-localStorage.setItem('checked',JSON.stringify([...checked]));
+// ─── 유틸 ───
+function fmt(v) {
+  return new Intl.NumberFormat('en-CA', {style:'currency', currency:'CAD', minimumFractionDigits:2}).format(v || 0);
 }
 
-function fmt(v){
-return new Intl.NumberFormat('ko-KR',{style:'currency',currency:'CAD'}).format(v||0);
+function getMonth() {
+  const d = document.getElementById('selDate').value;
+  return d ? d.slice(5, 7) : null;
 }
 
-function gen(){
-const m=new Date().toISOString().slice(5,7);
+// ─── 데이터 생성 ───
+function gen() {
+  const m = getMonth();
+  if (!m) return [];
 
-return base.map(x=>({
-...x,
-d:`${m}-${String(x.day).padStart(2,'0')}`,
-key:`${x.id}_${m}`
-}));
+  const amexVal = parseFloat(document.getElementById('amex').value) || 0;
+  const tdVal   = parseFloat(document.getElementById('td').value)   || 0;
+
+  const out = [];
+  base.forEach(x => {
+    let val = x.a;
+    if (x.id === 'amex') val = amexVal;
+    if (x.id === 'td')   val = tdVal;
+
+    if (x.cycle === 'biweekly') {
+      [x.start, x.start + 14].forEach(d => {
+        if (d <= 31) {
+          out.push({...x, a: val, d: `${m}-${String(d).padStart(2,'0')}`, key: `${x.id}_${m}_${d}`});
+        }
+      });
+    } else {
+      out.push({...x, a: val, d: `${m}-${String(x.day).padStart(2,'0')}`, key: `${x.id}_${m}`});
+    }
+  });
+
+  return out;
 }
 
-function render(){
-const data=gen();
+// ─── 렌더 ───
+function render() {
+  const all  = gen();
+  const data = all.filter(x => (showJoint && x.t === '공동') || (showPersonal && x.t === '개인'));
 
-const done=data.filter(x=>checked.has(x.key));
-const left=data.filter(x=>!checked.has(x.key));
+  const done = data.filter(x => checked.has(x.key));
+  const left = data.filter(x => !checked.has(x.key));
+  const sum  = arr => arr.reduce((t, x) => t + x.a, 0);
 
-const sum=a=>a.reduce((t,x)=>t+x.a,0);
+  // KPIs
+  document.getElementById('sch').textContent = fmt(sum(data));
+  document.getElementById('pd').textContent  = fmt(sum(done));
+  document.getElementById('rem').textContent = fmt(sum(left));
+  document.getElementById('jt').textContent  = fmt(sum(left.filter(x => x.t === '공동')));
+  document.getElementById('per').textContent = fmt(sum(left.filter(x => x.t === '개인')));
+  document.getElementById('cnt').textContent = `${data.length}개`;
+  document.getElementById('dcnt').textContent = `${done.length}개`;
+  document.getElementById('lcnt').textContent = `${left.length}개`;
 
-sch.textContent=fmt(sum(data));
-pd.textContent=fmt(sum(done));
-rem.textContent=fmt(sum(left));
+  // Item list
+  document.getElementById('list').innerHTML = data.map(x => {
+    const c   = checked.has(x.key);
+    const st  = c ? 'paid' : (x.v && x.a === 0 ? 'variable' : 'unpaid');
+    const stLabel = c ? '완료' : (x.v && x.a === 0 ? '미입력' : '예정');
+    const typeClass = x.t === '공동' ? 'badge-joint' : 'badge-personal';
+    return `<div class="item ${c ? 'done' : ''}" onclick="toggleItem('${x.key}')">
+      <div class="check-circle">${c ? '✓' : ''}</div>
+      <div class="item-body">
+        <div class="item-name">${x.n}</div>
+        <div class="item-meta">
+          <span>${x.d}</span>
+          <span class="badge ${typeClass}">${x.t}</span>
+          <span class="badge badge-${st}">${stLabel}</span>
+        </div>
+      </div>
+      <div class="item-right">
+        <span class="item-amount">${fmt(x.a)}</span>
+        <span style="font-size:var(--text-xs);color:var(--text-faint)">${x.cycle === 'biweekly' ? '격주' : '월'}</span>
+      </div>
+    </div>`;
+  }).join('');
 
-list.innerHTML=data.map(x=>{
-const c=checked.has(x.key);
-const st=c?'paid':'unpaid';
+  // Done list
+  document.getElementById('done').innerHTML = done.length
+    ? done.map(x => `<div class="split-item">
+        <span class="split-item-name">${x.n}</span>
+        <span class="split-item-amount">${fmt(x.a)}</span>
+      </div>`).join('')
+    : '<div class="empty">없음</div>';
 
-return `
-<div class="item ${c?'checked':''}">
-<div class="check" onclick="toggle('${x.key}')">
-${c?'✓':''}
-</div>
-
-<div class="content">
-<div class="title">${x.n}</div>
-<div class="amount">${fmt(x.a)}</div>
-<div class="meta">
-${x.d} · 
-<span class="badge ${x.t==='공동'?'joint':'personal'}">${x.t}</span>
-<span class="badge ${st}">${c?'완료':'예정'}</span>
-</div>
-</div>
-
-</div>
-`;
-}).join('');
+  // Left list
+  document.getElementById('left').innerHTML = left.length
+    ? left.map(x => `<div class="split-item">
+        <span class="split-item-name">${x.n}</span>
+        <span class="split-item-amount">${fmt(x.a)}</span>
+      </div>`).join('')
+    : '<div class="empty">모두 완료!</div>';
 }
 
-function toggle(k){
-checked.has(k)?checked.delete(k):checked.add(k);
-save();
-render();
+function toggleItem(key) {
+  checked.has(key) ? checked.delete(key) : checked.set(key, true);
+  render();
 }
 
+function toggle(type) {
+  if (type === 'joint') {
+    showJoint = !showJoint;
+    document.getElementById('toggleJoint').classList.toggle('on', showJoint);
+  } else {
+    showPersonal = !showPersonal;
+    document.getElementById('togglePersonal').classList.toggle('on', showPersonal);
+  }
+  render();
+}
+
+// ─── 이벤트 연결 ───
+['selDate', 'amex', 'td'].forEach(id => {
+  document.getElementById(id).addEventListener('input', render);
+});
+
+// ─── 초기화 ───
+document.getElementById('selDate').value = new Date().toISOString().slice(0, 10);
 render();
 </script>
-
 </body>
 </html>
