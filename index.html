@@ -707,6 +707,7 @@ function render() {
   document.getElementById('jt').textContent  = fmt(sharedRemaining);
   document.getElementById('per').textContent = fmt(personalRemaining);
   document.getElementById('cnt').textContent = `${data.length}개`;
+  saveState();
   document.getElementById('dcnt').textContent = `${done.length}개`;
   document.getElementById('lcnt').textContent = `${left.length}개`;
 
